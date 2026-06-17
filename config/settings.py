@@ -9,6 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 CSRF_TRUSTED_ORIGINS = [
     "https://avacurative.onrender.com",
+    "https://avacurativos.com.br",
+    "https://www.avacurativos.com.br",
 ]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -21,7 +23,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "avacurative.onrender.com",
-    ".onrender.com",
+    "avacurativos.com.br",
+    "www.avacurativos.com.br",
     "localhost",
     "127.0.0.1",
 ]
