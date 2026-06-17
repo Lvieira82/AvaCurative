@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Histórico
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card profissional">
+
+    <div class="form-title">
+        <span class="icone">📋</span>
+        <h1>Histórico de Consultas</h1>
+    </div>
+
+    <h3>{{ paciente.nome }}</h3>
+
+    {% for consulta in consultas %}
+
+        <div class="consulta-card">
+
+            <h3>
+                Consulta aberta em {{ consulta.criada_em|date:"d/m/Y H:i" }}
+            </h3>
+
+            {% if consulta.atualizada_em != consulta.criada_em %}
+                <small>
+                    Última edição: {{ consulta.atualizada_em|date:"d/m/Y H:i" }}
+                </small>
+            {% endif %}
+
+            <div class="acoes-consulta">
+
+                <a
+                    href="{% url 'detalhe_consulta' consulta.id %}"
+                    class="btn btn-ver"
+                >
+                    👁 Ver
+                </a>
+
+                {% if consulta.pode_editar %}
+                    <a
+                        href="{% url 'editar_consulta' consulta.id %}"
+                        class="btn btn-editar"
+                    >
+                        ✏ Editar
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="sem-consultas">
+            Nenhuma consulta registrada para este paciente.
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

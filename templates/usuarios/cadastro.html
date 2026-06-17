@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Criar Usuário - Ava Curative
+{% endblock %}
+
+{% block content %}
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <div class="login-brand">
+            <h1>Ava Curative</h1>
+            <p>Novo acesso ao sistema</p>
+        </div>
+
+        <h2>Criar usuário</h2>
+
+        {% if erro %}
+            <div class="alerta">
+                {{ erro }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="text" name="username" placeholder="Usuário" required>
+
+            <input type="email" name="email" placeholder="E-mail">
+
+            <input type="password" name="password" placeholder="Senha" required>
+
+            <button type="submit">
+                Criar Conta
+            </button>
+        </form>
+
+        <a href="{% url 'login' %}" class="link-cadastro">
+            Já tenho conta
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login - Ava Curative
+{% endblock %}
+
+{% block content %}
+
+<div class="login-page">
+
+    <div class="decor decor-top">🌿</div>
+
+    <div class="login-card">
+
+        <div class="login-brand">
+            <h1>Ava Curative</h1>
+            <p>Gestão de Pacientes e Consultas</p>
+        </div>
+
+        <h2>Acesse sua conta</h2>
+
+        {% if erro %}
+            <div class="alerta">
+                {{ erro }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Usuário"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Senha"
+                required
+            >
+
+            <button type="submit">
+                Entrar
+            </button>
+        </form>
+
+        <a href="{% url 'cadastro_usuario' %}" class="link-cadastro">
+            Criar nova conta
+        </a>
+
+    </div>
+
+    <div class="login-footer">
+        Enfermagem • Estomaterapia • Gestão Clínica
+    </div>
+
+</div>
+
+{% endblock %}

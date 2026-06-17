@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Nova Consulta
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card profissional">
+
+    <div class="form-title">
+        <span class="icone">🩺</span>
+
+        <h1>
+            {% if editando %}
+                Editar Consulta - {{ paciente.nome }}
+            {% else %}
+                Nova Consulta - {{ paciente.nome }}
+            {% endif %}
+        </h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>Diagnóstico Clínico</label>
+        {{ form.diagnostico_clinico }}
+
+        <label>Anamnese</label>
+        {{ form.anamnese }}
+
+        <label>Outras condutas</label>
+        {{ form.conduta }}
+
+        <div class="checkbox-grid">
+
+            <label class="check-card">
+                {{ form.diabetes }}
+                <span>DM</span>
+            </label>
+
+            <label class="check-card">
+                {{ form.hipertensao }}
+                <span>HAS</span>
+            </label>
+
+        </div>
+
+        {% if editando and consulta.fotos.all %}
+            <label>Fotos já anexadas:</label>
+
+            <div class="fotos-consulta">
+                {% for foto in consulta.fotos.all %}
+                    <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <label>Adicionar novas fotos:</label>
+
+        <input
+            type="file"
+            id="inputFotosConsulta"
+            name="fotos"
+            multiple
+            accept="image/*"
+        >
+
+        <div
+            id="previewFotosConsulta"
+            class="preview-fotos-consulta"
+        ></div>
+
+        <small>Máximo de 6 fotos.</small>
+
+        <button type="submit">
+            {% if editando %}
+                Atualizar Consulta
+            {% else %}
+                Salvar Consulta
+            {% endif %}
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

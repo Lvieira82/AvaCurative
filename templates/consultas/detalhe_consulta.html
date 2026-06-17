@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Consulta
+{% endblock %}
+
+{% block content %}
+
+<div class="consulta-card">
+
+    <h2>Consulta - {{ paciente.nome }}</h2>
+
+    <p>
+        <strong>Aberta em:</strong>
+        {{ consulta.criada_em|date:"d/m/Y H:i" }}
+    </p>
+
+    {% if consulta.atualizada_em != consulta.criada_em %}
+    <p>
+        <strong>Última edição:</strong>
+        {{ consulta.atualizada_em|date:"d/m/Y H:i" }}
+    </p>
+    {% endif %}
+
+    <div class="marcadores-consulta">
+
+        {% if consulta.diabetes %}
+            <span>DM</span>
+        {% endif %}
+
+        {% if consulta.hipertensao %}
+            <span>HAS</span>
+        {% endif %}
+
+    </div>
+
+    <hr>
+
+<p>
+    {{ consulta.descricao|linebreaks }}
+</p>
+
+{% if consulta.fotos.all %}
+
+<form
+    method="get"
+    action="{% url 'imprimir_consulta' consulta.id %}"
+    target="_blank"
+    class="form-impressao"
+>
+
+    <h3>Selecionar fotos para o PDF</h3>
+    <small>Escolha até 6 fotos para sair junto com a evolução.</small>
+
+    <div class="fotos-selecao-pdf">
+
+        {% for foto in consulta.fotos.all %}
+            <label class="foto-check-card">
+                <input
+                    type="checkbox"
+                    name="fotos"
+                    value="{{ foto.id }}"
+                    checked
+                >
+
+                <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
+            </label>
+        {% endfor %}
+
+    </div>
+
+    <button type="submit" class="btn btn-imprimir">
+        🖨 Imprimir / PDF
+    </button>
+
+</form>
+
+{% else %}
+
+<a
+    href="{% url 'imprimir_consulta' consulta.id %}"
+    class="btn btn-imprimir"
+    target="_blank"
+>
+    🖨 Imprimir / PDF
+</a>
+
+{% endif %}
+
+{% if pode_editar %}
+<a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-editar">
+    ✏️ Editar Consulta
+</a>
+{% endif %}
+
+
+</div>
+
+{% endblock %}

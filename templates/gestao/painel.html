@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Gestão
+{% endblock %}
+
+{% block content %}
+
+<h1>Painel de Gestão</h1>
+
+<div class="cards-dashboard">
+
+    <div class="card-info">
+        <h3>{{ total_pacientes }}</h3>
+        <p>Pacientes cadastrados</p>
+    </div>
+
+    <div class="card-info">
+        <h3>{{ total_consultas }}</h3>
+        <p>Consultas registradas</p>
+    </div>
+
+    <div class="card-info">
+        <h3>{{ usuarios_ativos }}</h3>
+        <p>Usuários ativos</p>
+    </div>
+
+</div>
+
+<div class="grid">
+
+    <a href="/admin/auth/user/" class="card">
+        <h3>Usuários</h3>
+        <p>Gerenciar contas e permissões</p>
+    </a>
+
+    <a href="/admin/" class="card">
+        <h3>Auditoria</h3>
+        <p>Histórico administrativo</p>
+    </a>
+
+    <a href="{% url 'backup_sqlite' %}" class="card">
+        <h3>Backup</h3>
+        <p>Baixar banco SQLite</p>
+    </a>
+
+</div>
+
+{% endblock %}

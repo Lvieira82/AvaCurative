@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ava Curativos{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+{% load static %}
+<script src="{% static 'js/app.js' %}?v=2"></script>
+<body>
+
+<header class="topbar">
+
+    <div class="logo-area">
+        <img src="{% static 'img/logo_ava.png' %}" class="logo-img" alt="Ava Curativos">
+
+        <div>
+            <strong>Ava Curativos</strong>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <nav>
+        <a href="{% url 'home' %}">Início</a>
+        <a href="{% url 'painel_gestao' %}">Gestão</a>
+        <a href="{% url 'logout' %}" class="sair">Sair</a>
+    </nav>
+    {% endif %}
+
+</header>
+
+<main class="container">
+
+    {% block content %}
+    {% endblock %}
+
+    {% if request.path != '/' %}
+    <div class="area-voltar">
+        <a href="javascript:history.back()" class="btn-voltar">
+            ← Voltar
+        </a>
+    </div>
+    {% endif %}
+
+</main>
+
+<script src="{% static 'js/app.js' %}"></script>
+
+</body>
+</html>

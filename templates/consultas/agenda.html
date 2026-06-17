@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Agenda
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card profissional">
+
+    <div class="form-title">
+        <span class="icone">🗓️</span>
+        <h1>Agenda</h1>
+    </div>
+
+    <h2>Agendar Consulta</h2>
+
+    <form method="post" action="{% url 'salvar_agendamento' %}">
+
+        {% csrf_token %}
+
+        <label>Paciente:</label>
+
+        <input
+            type="text"
+            id="buscaPacienteAgenda"
+            placeholder="Digite o nome do paciente..."
+            autocomplete="off"
+            required
+        >
+
+        <input
+            type="hidden"
+            id="pacienteIdAgenda"
+            name="paciente"
+        >
+
+        <div
+            id="resultadoPacienteAgenda"
+            class="autocomplete-resultados"
+        ></div>
+
+        <label>Data:</label>
+
+        <input
+            type="date"
+            id="dataAgenda"
+            name="data"
+            required
+        >
+
+        <label>Horários disponíveis:</label>
+
+        <div
+            id="horariosDisponiveis"
+            class="horarios-grid"
+        ></div>
+
+        <input
+            type="hidden"
+            id="horaSelecionada"
+            name="hora"
+            required
+        >
+
+        <label>Observação:</label>
+
+        <textarea
+            name="observacao"
+            rows="3"
+            placeholder="Observação do agendamento..."
+        ></textarea>
+
+        <button type="submit">
+            Confirmar Agendamento
+        </button>
+
+    </form>
+
+</div>
+
+<div class="form-card profissional">
+
+    <div class="form-title">
+        <span class="icone">🚫</span>
+        <h2>Bloquear Agenda</h2>
+    </div>
+
+    <form method="post" action="{% url 'bloquear_horario' %}">
+
+        {% csrf_token %}
+
+        <label>Tipo de bloqueio:</label>
+
+        <select
+            name="tipo_bloqueio"
+            id="tipoBloqueio"
+            required
+        >
+            <option value="">Selecione</option>
+            <option value="DIA">Bloquear dia inteiro</option>
+            <option value="PERIODO">Bloquear período</option>
+            <option value="HORARIO">Bloquear horário específico</option>
+        </select>
+
+        <label>Data inicial:</label>
+
+        <input
+            type="date"
+            name="data_inicio"
+            required
+        >
+
+        <div id="campoDataFim" style="display:none;">
+
+            <label>Data final:</label>
+
+            <input
+                type="date"
+                name="data_fim"
+            >
+
+        </div>
+
+        <div id="campoHoras" style="display:none;">
+
+            <label>Hora inicial:</label>
+
+            <input
+                type="time"
+                name="hora_inicio"
+            >
+
+            <label>Hora final:</label>
+
+            <input
+                type="time"
+                name="hora_fim"
+            >
+
+        </div>
+
+        <label>Motivo / Observação:</label>
+
+        <textarea
+            name="observacao"
+            rows="3"
+            placeholder="Informe o motivo do bloqueio..."
+        ></textarea>
+
+        <button type="submit">
+            Bloquear Agenda
+        </button>
+
+    </form>
+    <form method="post" action="{% url 'desbloquear_dia' %}">
+        {% csrf_token %}
+
+        <label>Desbloquear dia inteiro:</label>
+
+        <input type="date" name="data" required>
+
+        <button type="submit" class="btn-desbloquear-dia">
+            Desbloquear Dia
+        </button>
+    </form>
+
+</div>
+
+
+{% endblock %}

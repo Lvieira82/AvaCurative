@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Buscar Paciente
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card profissional busca-card">
+
+    <div class="form-title">
+        <span class="icone">🔎</span>
+        <h1>Buscar Paciente</h1>
+    </div>
+
+    <p class="texto-apoio">
+        Digite as primeiras letras do nome do paciente para localizar o arquivo.
+    </p>
+
+    <input
+        type="text"
+        id="buscaPaciente"
+        placeholder="Digite o nome do paciente..."
+        autocomplete="off"
+        autofocus
+    >
+
+    <div
+        id="resultadoAutocomplete"
+        class="autocomplete-resultados lista-busca"
+    ></div>
+
+</div>
+
+{% endblock %}

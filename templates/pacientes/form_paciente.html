@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo Paciente{% endblock %}
+
+{% block content %}
+
+<div class="form-card profissional">
+
+    <div class="form-title">
+        <span class="icone">👤+</span>
+        <h1>Cadastrar Paciente</h1>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Nome:</label>
+        {{ form.nome }}
+
+        <label>Endereço:</label>
+        {{ form.endereco }}
+
+        <label>Telefone:</label>
+        {{ form.telefone }}
+
+        <label>Data nascimento:</label>
+        {{ form.data_nascimento }}
+
+        <label>Origem:</label>
+        {{ form.origem }}
+
+        <label>Email:</label>
+        {{ form.email }}
+
+        <button type="submit">
+            💾 Salvar Paciente
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

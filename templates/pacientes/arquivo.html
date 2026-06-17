@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Arquivo do Paciente
+{% endblock %}
+
+{% block content %}
+
+<div class="paciente-header">
+
+    <h1>
+        {{ paciente.nome }}
+    </h1>
+
+    <p>
+        {{ paciente.telefone }}
+    </p>
+
+    <p>
+        {{ paciente.email }}
+    </p>
+
+
+<div class="acoes-paciente">
+
+    <a href="{% url 'nova_consulta' paciente.id %}"
+       class="btn btn-nova">
+        ➕ Nova Consulta
+    </a>
+    <a href="{% url 'prescrever_paciente' paciente.id %}" class="btn btn-prescrever">
+        📋 Prescrever
+    </a>
+
+    {% if tem_consultas %}
+
+        <a href="{% url 'historico_consultas' paciente.id %}"
+           class="btn btn-historico">
+            📋 Histórico de Consultas
+        </a>
+
+    {% else %}
+
+        <div class="sem-consultas">
+            Este paciente ainda não possui consultas registradas.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+
+{% endblock %}

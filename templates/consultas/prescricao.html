@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Prescrição - {{ paciente.nome }}</title>
+
+<style>
+@page{
+    size:A4;
+    margin:8mm;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#111;
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+}
+
+.folha{
+    width:100%;
+    min-height:270mm;
+    position:relative;
+    padding:0 8mm 38mm 8mm;
+}
+
+/* FAIXA VERDE */
+.faixa-superior{
+    background:#0b3f25;
+    color:white;
+    height:60px;
+    margin:0 -8mm 12px -8mm;
+    padding:8px 35px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.faixa-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    font-size:16px;
+}
+
+.faixa-logo img{
+    height:42px;
+    width:auto;
+}
+
+.faixa-contato{
+    text-align:right;
+    font-size:12px;
+    line-height:1.35;
+    font-weight:bold;
+    padding-right:25px;
+}
+
+/* RAMO DO TOPO */
+.folha-topo{
+    width:220px;
+    height:auto;
+    display:block;
+    margin:0 0 12px 0;
+}
+
+/* CABEÇALHO */
+.info{
+    margin-top:5px;
+}
+
+.info p{
+    font-size:16px;
+    margin:4px 0;
+}
+
+.label{
+    color:#4f6842;
+    font-weight:bold;
+}
+
+.linha{
+    width:100%;
+    border-top:2px solid #4f6842;
+    margin:10px 0 12px 0;
+}
+
+.data{
+    font-size:14px;
+    font-weight:bold;
+}
+
+/* ÁREA DIGITÁVEL */
+.form-prescricao{
+    width:100%;
+}
+
+.texto-prescricao{
+    width:100%;
+    height:145mm;
+
+    border:none;
+    outline:none;
+    resize:none;
+
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:16px;
+    line-height:1.7;
+
+    background:transparent;
+}
+
+/* RODAPÉ */
+.rodape-final{
+    position:absolute;
+    left:8mm;
+    right:8mm;
+    bottom:8mm;
+
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+}
+
+.obs-legal{
+    position:absolute;
+    left:0;
+    bottom:0;
+
+    width:170px;
+    font-size:8px;
+    line-height:1.15;
+    text-align:center;
+    letter-spacing:1px;
+}
+
+.assinatura-area{
+    width:260px;
+    text-align:center;
+    z-index:2;
+}
+
+.assinatura-img{
+    width:90px !important;
+    height:auto !important;
+    display:block;
+    margin:0 auto -2px auto;
+}
+
+.linha-assinatura{
+    width:220px;
+    border-top:1px solid #555;
+    margin:0 auto 4px auto;
+}
+
+.dados-profissional{
+    font-size:10px;
+    line-height:1.2;
+    margin:0;
+    color:#315c35;
+}
+
+/* RAMO INFERIOR */
+.folha-base{
+    position:absolute;
+    right:10mm;
+    bottom:0mm;
+    width:220px;
+    height:auto;
+}
+
+/* BOTÃO */
+.btn-print{
+    position:fixed;
+    top:18px;
+    right:20px;
+    background:#315c35;
+    color:white;
+    padding:12px 18px;
+    border-radius:8px;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+    z-index:9999;
+}
+
+@media print{
+    .btn-print{
+        display:none;
+    }
+
+    body{
+        margin:0;
+    }
+
+    textarea{
+        border:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<button onclick="window.print()" class="btn-print">
+    🖨 Imprimir / Salvar PDF
+</button>
+
+<div class="folha">
+
+    <div class="faixa-superior">
+        <div class="faixa-logo">
+            <img src="{% static 'img/logo_ava.png' %}" alt="Logo">
+            <span>Ava Curativos</span>
+        </div>
+
+        <div class="faixa-contato">
+            Contato: (75) 98141-9840<br>
+            Instagram: @enfaannavitoria
+        </div>
+    </div>
+
+    <img src="{% static 'img/folha_topo.png' %}" class="folha-topo" alt="">
+
+    <div class="info">
+        <p class="data">
+            <span class="label">DATA:</span>
+            {% now "d/m/Y" %}
+        </p>
+
+        <p>
+            <span class="label">PACIENTE:</span>
+            {{ paciente.nome|upper }}
+        </p>
+    </div>
+
+    <div class="linha"></div>
+
+    <form method="post" class="form-prescricao">
+        {% csrf_token %}
+
+        <textarea
+            name="texto"
+            class="texto-prescricao"
+            placeholder="Digite a prescrição aqui..."
+        >{{ form.texto.value|default_if_none:'' }}</textarea>
+    </form>
+
+    <div class="rodape-final">
+
+        <div class="obs-legal">
+            ART. 88. TODO PACIENTE OU SEU REPRESENTANTE LEGAL TEM O DIREITO DE SOLICITAR E RECEBER CÓPIA DO RESPECTIVO PRONTUÁRIO.
+        </div>
+
+        <div class="assinatura-area">
+            <img src="{% static 'img/assinatura.png' %}" class="assinatura-img">
+
+            <div class="linha-assinatura"></div>
+
+            <p class="dados-profissional">
+                Enfa. Anna Vitória Alves<br>
+                Estomaterapeuta - COREN-BA: 778832ENF<br>
+                Feira de Santana-BA<br>
+                Contato: (75) 98141-9840<br>
+                Instagram: @enfaannavitoria
+            </p>
+        </div>
+
+        <img src="{% static 'img/folha_base.png' %}" class="folha-base" alt="">
+
+    </div>
+
+</div>
+
+</body>
+</html>

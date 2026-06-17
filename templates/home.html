@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Início
+{% endblock %}
+
+{% block content %}
+
+<section class="home-hero">
+
+    <div class="home-texto">
+
+        <h1>Ava Curativos</h1>
+
+        <h2>Especialista em Feridas e Curativos</h2>
+
+        <p>
+            Sistema profissional para gestão de pacientes, consultas,
+            evolução clínica, agenda e prontuários.
+        </p>
+
+        <div class="actions">
+
+            <a href="{% url 'cadastrar_paciente' %}" class="btn">
+                Novo Paciente
+            </a>
+
+            <a href="{% url 'buscar_paciente' %}" class="btn secundario">
+                Buscar Paciente
+            </a>
+
+            <a href="{% url 'agenda' %}" class="btn agenda-btn">
+                Agenda
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="home-logo">
+        <img src="{% static 'img/logo_ava.png' %}" class="logo-home-img" alt="Ava Curativos">
+    </div>
+
+</section>
+
+{% endblock %}

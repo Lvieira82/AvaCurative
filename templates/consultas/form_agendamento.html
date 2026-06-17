@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Novo Agendamento
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card">
+
+    <h1>Novo Agendamento</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Salvar Agendamento
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}
