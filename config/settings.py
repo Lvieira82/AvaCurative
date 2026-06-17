@@ -7,7 +7,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://avacurative.onrender.com",
+]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -18,9 +20,10 @@ SECRET_KEY = 'django-insecure-74y+t8$i9!m)o0o&n+#ha*d-$q@h-lvm4zwc-xaqq96(2cuz0a
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '.onrender.com',
-    'localhost',
-    '127.0.0.1',
+    "avacurative.onrender.com",
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
 # Application definition
 
