@@ -17,7 +17,6 @@ Login - Ava Curative
             <p>Gestão de Pacientes e Consultas</p>
         </div>
 
-        <h2>Acesse sua conta</h2>
 
         {% if erro %}
             <div class="alerta">
@@ -46,11 +45,10 @@ Login - Ava Curative
                 Entrar
             </button>
         </form>
-
-        <a href="{% url 'cadastro_usuario' %}" class="link-cadastro">
-            Criar nova conta
+        <a href="{% url 'cadastro_usuario' %}" class="btn-voltar">
+            ➕ Criar nova conta
         </a>
-
+        
     </div>
 
     <div class="login-footer">

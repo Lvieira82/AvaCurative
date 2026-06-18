@@ -764,3 +764,22 @@ body{
     color:#9b1c1c;
     font-weight:bold;
 }
+.btn-voltar{
+    display:inline-block;
+    background:#58784a;
+    color:white;
+    text-decoration:none;
+    padding:12px 22px;
+    border-radius:12px;
+    font-weight:600;
+    margin-top:15px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    transition:.2s;
+}
+
+.btn-voltar:hover{
+    background:#47653c;
+    transform:translateY(-2px);
+    color:white;
+}

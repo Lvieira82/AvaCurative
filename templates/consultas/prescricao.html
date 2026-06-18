@@ -24,11 +24,20 @@ body{
     print-color-adjust:exact;
 }
 
+*{
+    box-sizing:border-box;
+}
+
 .folha{
     width:100%;
+    max-width:190mm;
+    height:270mm;
     min-height:270mm;
+    max-height:270mm;
+    margin:0 auto;
     position:relative;
-    padding:0 8mm 38mm 8mm;
+    padding:0 12mm 42mm 12mm;
+    overflow:hidden;
 }
 
 /* FAIXA VERDE */
@@ -104,44 +113,78 @@ body{
     width:100%;
 }
 
-.texto-prescricao{
+.texto-prescricao,
+#id_texto{
     width:100%;
-    height:145mm;
+    height:125mm;
+    max-height:125mm;
 
     border:none;
     outline:none;
     resize:none;
 
+    font-size:14px;
+    line-height:1.45;
     font-family:Arial, Helvetica, sans-serif;
-    font-size:16px;
-    line-height:1.7;
 
     background:transparent;
+
+    overflow:hidden;
+    white-space:pre-wrap;
+    overflow-wrap:break-word;
+    word-break:normal;
+}
+
+.texto-impressao{
+    display:none;
+}
+
+@media print{
+    .texto-prescricao{
+        display:none;
+    }
+
+    .texto-impressao{
+        display:block;
+        width:100%;
+        min-height:145mm;
+
+        font-size:15px;
+        line-height:1.55;
+        font-family:Arial, Helvetica, sans-serif;
+
+        white-space:pre-wrap;
+        overflow-wrap:break-word;
+        word-break:normal;
+    }
 }
 
 /* RODAPÉ */
 .rodape-final{
     position:absolute;
-    left:8mm;
-    right:8mm;
+    left:12mm;
+    right:12mm;
     bottom:8mm;
+
+    height:32mm;
 
     display:flex;
     align-items:flex-end;
     justify-content:center;
+    page-break-inside:avoid;
 }
 
 .obs-legal{
     position:absolute;
     left:0;
     bottom:0;
-
-    width:170px;
-    font-size:8px;
-    line-height:1.15;
+    width:155px;
+    font-size:7px;
+    line-height:1.1;
     text-align:center;
-    letter-spacing:1px;
+    letter-spacing:.6px;
 }
+
 
 .assinatura-area{
     width:260px;
@@ -150,10 +193,8 @@ body{
 }
 
 .assinatura-img{
-    width:90px !important;
+    width:75px !important;
     height:auto !important;
-    display:block;
-    margin:0 auto -2px auto;
 }
 
 .linha-assinatura{
@@ -163,8 +204,8 @@ body{
 }
 
 .dados-profissional{
-    font-size:10px;
-    line-height:1.2;
+    font-size:9px;
+    line-height:1.15;
     margin:0;
     color:#315c35;
 }
@@ -172,9 +213,9 @@ body{
 /* RAMO INFERIOR */
 .folha-base{
     position:absolute;
-    right:10mm;
-    bottom:0mm;
-    width:220px;
+    right:5mm;
+    bottom:0;
+    width:170px;
     height:auto;
 }
 
@@ -191,6 +232,26 @@ body{
     font-weight:bold;
     cursor:pointer;
     z-index:9999;
+}
+#id_texto,
+.texto-prescricao{
+    width:100%;
+    height:145mm;
+    border:none;
+    outline:none;
+    resize:none;
+    font-size:15px;
+    line-height:1.55;
+    font-family:Arial, Helvetica, sans-serif;
+    background:transparent;
+}
+.texto-prescricao-impressao{
+    width:100%;
+    font-size:13px;
+    line-height:1.4;
+    white-space:normal;
+    overflow-wrap:break-word;
+    word-break:normal;
 }
 
 @media print{
@@ -242,17 +303,22 @@ body{
             {{ paciente.nome|upper }}
         </p>
     </div>
-
+    <div class="texto-prescricao-impressao">
+        {{ prescricao.texto|linebreaksbr }}
+    </div>
     <div class="linha"></div>
 
     <form method="post" class="form-prescricao">
         {% csrf_token %}
 
-        <textarea
-            name="texto"
-            class="texto-prescricao"
-            placeholder="Digite a prescrição aqui..."
-        >{{ form.texto.value|default_if_none:'' }}</textarea>
+        <form method="post" class="form-prescricao">
+            {% csrf_token %}
+
+            {{ form.texto }}
+
+        </form>
+
+        <div class="texto-impressao" id="textoImpressao"></div>
     </form>
 
     <div class="rodape-final">
@@ -280,6 +346,22 @@ body{
     </div>
 
 </div>
+<script>
+    const campo = document.getElementById("textoPrescricao");
+    const impressao = document.getElementById("textoImpressao");
 
+    function atualizarTextoImpressao(){
+        if(campo && impressao){
+            impressao.textContent = campo.value;
+        }
+    }
+
+    if(campo){
+        campo.addEventListener("input", atualizarTextoImpressao);
+        atualizarTextoImpressao();
+    }
+
+    window.addEventListener("beforeprint", atualizarTextoImpressao);
+</script>
 </body>
 </html>
