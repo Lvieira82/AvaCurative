@@ -5,15 +5,106 @@ Agenda
 {% endblock %}
 
 {% block content %}
+<div class="agenda-layout">
 
+    <div class="agenda-formulario">
+        <!-- aqui fica seu formulário de agendamento e bloqueio -->
+    </div>
+<div class="cards-agenda-superior">
+        <div class="agenda-lista consultar-agendados">
+
+        <h2>🔎 Consultar Agendados</h2>
+
+        <label>Paciente:</label>
+
+        <input
+            type="text"
+            id="buscarAgendado"
+            placeholder="Digite o nome do paciente..."
+            autocomplete="off"
+        >
+
+        <input
+            type="hidden"
+            id="pacienteAgendadoId"
+        >
+
+        <div id="resultadoAgendadoAutocomplete" class="autocomplete-resultados"></div>
+
+        <div id="resultadoAgendamentosPaciente"></div>
+
+    </div>
+     <div class="agenda-lista">
+
+            <h2>📋 Agendamentos do Dia</h2>
+
+            <form method="get">
+                <label>Ver data:</label>
+                <input
+                    type="date"
+                    name="data"
+                    value="{{ data_selecionada|date:'Y-m-d' }}"
+                    onchange="this.form.submit()"
+                >
+            </form>
+    
+            {% if agendamentos_do_dia %}
+
+                {% for item in agendamentos_do_dia %}
+
+                    <div class="linha-agendada">
+
+                        <div>
+                            <strong>{{ item.data|date:"d/m/Y" }}</strong>
+                            -
+                            <strong>{{ item.hora|time:"H:i" }}</strong>
+
+                            {% if item.paciente %}
+                                - {{ item.paciente.nome }}
+                            {% else %}
+                                - Horário bloqueado
+                            {% endif %}
+                        </div>
+
+                        {% if item.status == "BLOQUEADA" %}
+
+                            <a
+                                href="{% url 'desbloquear_horario' %}?data={{ item.data|date:'Y-m-d' }}&hora={{ item.hora|time:'H:i' }}"
+                                class="btn-desbloquear"
+                            >
+                                Desbloquear
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'desmarcar_consulta_agendada' item.id %}"
+                                class="btn-desmarcar"
+                                onclick="return confirm('Deseja realmente desmarcar esta consulta?')"
+                            >
+                                Desmarcar
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>Nenhum agendamento para esta data.</p>
+
+            {% endif %}
+
+    </div>
+
+</div>
 <div class="form-card profissional">
 
     <div class="form-title">
-        <span class="icone">🗓️</span>
-        <h1>Agenda</h1>
+        <h1><span class="icone">🗓️</span>Agendar Consulta</h1>
     </div>
-
-    <h2>Agendar Consulta</h2>
 
     <form method="post" action="{% url 'salvar_agendamento' %}">
 
@@ -82,8 +173,7 @@ Agenda
 <div class="form-card profissional">
 
     <div class="form-title">
-        <span class="icone">🚫</span>
-        <h2>Bloquear Agenda</h2>
+        <h2><span class="icone">🚫</span>Bloquear Agenda</h2>
     </div>
 
     <form method="post" action="{% url 'bloquear_horario' %}">

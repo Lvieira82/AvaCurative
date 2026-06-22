@@ -25,6 +25,8 @@ from consultas.views import (
     prescrever_paciente,
     desbloquear_horario,
     desbloquear_dia,
+    desmarcar_consulta_agendada,
+    consultar_agendamentos_paciente,
 
     
 )
@@ -48,69 +50,21 @@ urlpatterns = [
     path("agenda/<int:id>/cancelar/", cancelar_agendamento, name="cancelar_agendamento"),
     path("pacientes/autocomplete/", autocomplete_pacientes, name="autocomplete_pacientes"),
     path("agenda/", agenda, name="agenda"),
-    path(
-        "consultas/historico/<int:paciente_id>/",
-        historico_consultas,
-        name="historico_consultas"
-    ),
-    path(
-        "agenda/horarios/",
-        horarios_disponiveis,
-        name="horarios_disponiveis"
-    ),
-
-    path(
-        "agenda/salvar/",
-        salvar_agendamento,
-        name="salvar_agendamento"
-    ),
-
-    path(
-        "agenda/bloquear/",
-        bloquear_horario,
-        name="bloquear_horario"
-    ),
-    path(
-        "paciente/<int:id>/historico/",
-        historico_consultas,
-        name="historico_consultas"
-    ),
-    path(
-        "consulta/nova/<int:paciente_id>/",
-        nova_consulta,
-        name="nova_consulta"
-    ),
-    path(
-        "consulta/<int:id>/",
-        detalhe_consulta,
-        name="detalhe_consulta"
-    ),
-    path(
-        "consulta/<int:id>/imprimir/",
-        imprimir_consulta,
-        name="imprimir_consulta"
-    ),
-    path(
-    "consulta/<int:id>/prescrever/",
-    prescrever_consulta,
-    name="prescrever_consulta"
-    ),
-    path(
-    "paciente/<int:id>/prescrever/",
-    prescrever_paciente,
-    name="prescrever_paciente"
-    ),
-    path(
-        "agenda/desbloquear/",
-        desbloquear_horario,
-        name="desbloquear_horario"
-    ),
-    path(
-        "agenda/desbloquear-dia/",
-        desbloquear_dia,
-        name="desbloquear_dia"
-    ),
-    
+    path("consultas/historico/<int:paciente_id>/", historico_consultas,name="historico_consultas"),
+    path("agenda/horarios/", horarios_disponiveis, name="horarios_disponiveis"),
+    path("agenda/salvar/", salvar_agendamento, name="salvar_agendamento"),
+    path("agenda/bloquear/", bloquear_horario, name="bloquear_horario"),
+    path("paciente/<int:id>/historico/", historico_consultas, name="historico_consultas"),
+    path("consulta/nova/<int:paciente_id>/", nova_consulta, name="nova_consulta"),
+    path("consulta/<int:id>/", detalhe_consulta, name="detalhe_consulta"),
+    path("consulta/<int:id>/imprimir/", imprimir_consulta, name="imprimir_consulta"),
+    path("consulta/<int:id>/prescrever/", prescrever_consulta, name="prescrever_consulta"),
+    path("paciente/<int:id>/prescrever/", prescrever_paciente, name="prescrever_paciente"),
+    path("agenda/desbloquear/", desbloquear_horario, name="desbloquear_horario"),
+    path("agenda/desbloquear-dia/", desbloquear_dia, name="desbloquear_dia"),
+    path("agenda/desmarcar/<int:id>/", desmarcar_consulta_agendada, name="desmarcar_consulta_agendada"),
+    path("agenda/consultar-agendados/", consultar_agendamentos_paciente, name="consultar_agendamentos_paciente"),
+        
 ]
 if settings.DEBUG:
     urlpatterns += static(

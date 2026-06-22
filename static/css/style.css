@@ -783,3 +783,104 @@ body{
     transform:translateY(-2px);
     color:white;
 }
+.linha-consulta{
+    color:#174987;
+    font-weight:bold;
+}
+
+.btn-desmarcar{
+    margin-left:10px;
+    color:white;
+    background:#b72b2b;
+    padding:4px 8px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:12px;
+}
+
+.btn-desbloquear{
+    margin-left:10px;
+    color:white;
+    background:#58784a;
+    padding:4px 8px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:12px;
+}
+.agenda-layout{
+    display:grid;
+    grid-template-columns: 1fr 380px;
+    gap:25px;
+    align-items:start;
+}
+
+.agenda-lista{
+    background:white;
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.linha-agendada{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+
+    padding:10px 0;
+    border-bottom:1px solid #ddd;
+}
+
+.btn-desmarcar{
+    background:#b72b2b;
+    color:white;
+    padding:6px 10px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.btn-desbloquear{
+    background:#58784a;
+    color:white;
+    padding:6px 10px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:bold;
+}
+.consultar-agendados{
+    margin-bottom:18px;
+}
+
+.resultado-agendamentos{
+    margin-top:12px;
+}
+
+.linha-consulta-paciente{
+    padding:10px 0;
+    border-bottom:1px solid #ddd;
+    font-size:14px;
+}
+
+.linha-consulta-paciente span{
+    display:inline-block;
+    margin-left:8px;
+    background:#e7eee2;
+    color:#4f6842;
+    border-radius:10px;
+    padding:3px 8px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.sem-agendamento{
+    color:#9b1c1c;
+    font-weight:bold;
+}
+@media(max-width: 800px){
+    .cards-agenda-superior{
+        grid-template-columns:1fr;
+    }
+}

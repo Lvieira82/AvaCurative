@@ -196,6 +196,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     dataAgenda.addEventListener("change", carregarHorarios);
+    if (dataAgenda.value) {
+        carregarHorarios();
+    }
+    if (!dataAgenda.value) {
+        const hoje = new Date().toISOString().split("T")[0];
+        dataAgenda.value = hoje;
+        carregarHorarios();
+    }
 
     function carregarHorarios() {
 
@@ -288,46 +296,173 @@ document.getElementById("listaAgendamentosDia");
 
 function atualizarListaDia(horarios, dataSelecionada){
 
+    const cardAgendamentos =
+    document.getElementById("cardAgendamentosDia");
+
+    const listaAgendamentos =
+    document.getElementById("listaAgendamentosDia");
+
     if(!cardAgendamentos || !listaAgendamentos){
         return;
     }
 
     cardAgendamentos.style.display = "block";
-
     listaAgendamentos.innerHTML = "";
 
     horarios.forEach(function(item){
 
-        const linha =
-        document.createElement("div");
+        const linha = document.createElement("div");
 
-        if(item.disponivel){
+        linha.classList.add("linha-agendamento-dia");
 
-            linha.className =
-            "linha-agendamento-dia linha-livre";
+        if(item.tipo === "livre"){
 
-            linha.innerHTML =
-            `<strong>${item.hora}</strong> - Livre`;
-
-        }else{
-
-            linha.className =
-            "linha-agendamento-dia linha-bloqueada";
+            linha.classList.add("linha-livre");
 
             linha.innerHTML = `
-                <strong>${item.hora}</strong>
-                - Bloqueado
+                <strong>${item.hora}</strong> - Livre
+            `;
+        }
 
-                <a
-                href="/agenda/desbloquear/?data=${dataSelecionada}&hora=${item.hora}"
-                class="btn-desbloquear">
-                Desbloquear
+        if(item.tipo === "bloqueio"){
+
+            linha.classList.add("linha-bloqueada");
+
+            linha.innerHTML = `
+                <strong>${item.hora}</strong> - Horário bloqueado
+
+                <a href="/agenda/desbloquear/?data=${dataSelecionada}&hora=${item.hora}"
+                   class="btn-desbloquear">
+                    Desbloquear
+                </a>
+            `;
+        }
+
+        if(item.tipo === "consulta"){
+
+            linha.classList.add("linha-consulta");
+
+            linha.innerHTML = `
+                <strong>${item.hora}</strong> -
+                ${item.paciente}
+
+                <a href="/agenda/desmarcar/${item.id}/"
+                   class="btn-desmarcar"
+                   onclick="return confirm('Deseja realmente desmarcar esta consulta?')">
+                    Desmarcar
                 </a>
             `;
         }
 
         listaAgendamentos.appendChild(linha);
+    });
+}
+document.addEventListener("DOMContentLoaded", function () {
 
+    const buscarAgendado = document.getElementById("buscarAgendado");
+    const pacienteAgendadoId = document.getElementById("pacienteAgendadoId");
+    const resultadoAuto = document.getElementById("resultadoAgendadoAutocomplete");
+    const resultadoAgenda = document.getElementById("resultadoAgendamentosPaciente");
+
+    if (!buscarAgendado || !pacienteAgendadoId || !resultadoAuto || !resultadoAgenda) {
+        return;
+    }
+
+    buscarAgendado.addEventListener("input", function () {
+
+        const termo = buscarAgendado.value.trim();
+
+        resultadoAuto.innerHTML = "";
+        resultadoAgenda.innerHTML = "";
+        pacienteAgendadoId.value = "";
+
+        if (termo.length < 2) {
+            return;
+        }
+
+        fetch("/pacientes/autocomplete/?q=" + encodeURIComponent(termo))
+            .then(response => response.json())
+            .then(data => {
+
+                resultadoAuto.innerHTML = "";
+
+                if (data.length === 0) {
+                    resultadoAuto.innerHTML = `
+                        <div class="autocomplete-vazio">
+                            Nenhum paciente encontrado.
+                        </div>
+                    `;
+                    return;
+                }
+
+                data.forEach(function (paciente) {
+
+                    const item = document.createElement("div");
+                    item.classList.add("autocomplete-item");
+
+                    item.innerHTML = `
+                        <strong>${paciente.nome}</strong>
+                    `;
+
+                    item.addEventListener("click", function () {
+
+                        buscarAgendado.value = paciente.nome;
+                        pacienteAgendadoId.value = paciente.id;
+                        resultadoAuto.innerHTML = "";
+
+                        carregarAgendamentosPaciente(paciente.id);
+                    });
+
+                    resultadoAuto.appendChild(item);
+                });
+            })
+            .catch(error => {
+                console.error("Erro no autocomplete consultar agendados:", error);
+            });
     });
 
-}
+    function carregarAgendamentosPaciente(id) {
+
+        resultadoAgenda.innerHTML = "Carregando...";
+
+        fetch("/agenda/consultar-agendados/?paciente_id=" + id)
+            .then(response => response.json())
+            .then(retorno => {
+
+                resultadoAgenda.innerHTML = "";
+
+                if (retorno.resultados.length === 0) {
+                    resultadoAgenda.innerHTML = `
+                        <p class="sem-agendamento">
+                            Nenhum agendamento encontrado.
+                        </p>
+                    `;
+                    return;
+                }
+
+                retorno.resultados.forEach(function (ag) {
+
+                    const linha = document.createElement("div");
+                    linha.classList.add("linha-consulta-paciente");
+
+                    linha.innerHTML = `
+                        <strong>${ag.data}</strong> -
+                        <strong>${ag.hora}</strong> -
+                        ${ag.paciente}
+
+                        <a href="/agenda/desmarcar/${ag.id}/"
+                           class="btn-desmarcar"
+                           onclick="return confirm('Deseja realmente desmarcar esta consulta?')">
+                            Desmarcar
+                        </a>
+                    `;
+
+                    resultadoAgenda.appendChild(linha);
+                });
+            })
+            .catch(error => {
+                console.error("Erro ao consultar agendamentos:", error);
+            });
+    }
+
+});

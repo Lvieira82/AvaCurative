@@ -393,17 +393,25 @@ def agenda(request):
 
     hoje = timezone.localdate()
 
-    agendamentos = (
-        AgendaConsulta.objects
-        .filter(data__gte=hoje)
-        .order_by("data", "hora")
-    )
+    data_selecionada = request.GET.get("data")
+
+    if data_selecionada:
+        data_base = data_selecionada
+    else:
+        data_base = hoje
+
+    agendamentos_do_dia = AgendaConsulta.objects.filter(
+        data=data_base
+    ).exclude(
+        status="CANCELADA"
+    ).select_related("paciente").order_by("hora")
 
     return render(
         request,
         "consultas/agenda.html",
         {
-            "agendamentos": agendamentos
+            "agendamentos_do_dia": agendamentos_do_dia,
+            "data_selecionada": data_base,
         }
     )
 
@@ -581,32 +589,52 @@ def horarios_disponiveis(request):
         data=data
     ).exclude(
         status="CANCELADA"
-    )
+    ).select_related("paciente")
 
-    horarios_ocupados = set()
+    mapa_agendamentos = {}
 
     for agendamento in agendamentos:
 
         if agendamento.hora:
-            horarios_ocupados.add(
-                agendamento.hora.strftime("%H:%M")
-            )
+            hora_formatada = agendamento.hora.strftime("%H:%M")
+            mapa_agendamentos[hora_formatada] = agendamento
 
     horarios = []
 
     for hora in HORARIOS_PADRAO:
 
-        if hora in horarios_ocupados:
-            horarios.append({
-                "hora": hora,
-                "status": "BLOQUEADO",
-                "disponivel": False
-            })
+        agendamento = mapa_agendamentos.get(hora)
+
+        if agendamento:
+
+            if agendamento.status == "BLOQUEADA":
+                horarios.append({
+                    "id": agendamento.id,
+                    "hora": hora,
+                    "status": "BLOQUEADO",
+                    "paciente": "",
+                    "disponivel": False,
+                    "tipo": "bloqueio"
+                })
+
+            else:
+                horarios.append({
+                    "id": agendamento.id,
+                    "hora": hora,
+                    "status": "AGENDADO",
+                    "paciente": agendamento.paciente.nome if agendamento.paciente else "",
+                    "disponivel": False,
+                    "tipo": "consulta"
+                })
+
         else:
             horarios.append({
+                "id": None,
                 "hora": hora,
                 "status": "LIVRE",
-                "disponivel": True
+                "paciente": "",
+                "disponivel": True,
+                "tipo": "livre"
             })
 
     return JsonResponse({
@@ -639,3 +667,56 @@ def desbloquear_dia(request):
         ).delete()
 
     return redirect("agenda")
+
+@login_required
+def desmarcar_consulta_agendada(request, id):
+
+    agendamento = get_object_or_404(
+        AgendaConsulta,
+        id=id
+    )
+
+    agendamento.status = "CANCELADA"
+    agendamento.save()
+
+    messages.success(
+        request,
+        "Consulta desmarcada com sucesso."
+    )
+
+    return redirect("agenda")
+@login_required
+def consultar_agendamentos_paciente(request):
+
+    paciente_id = request.GET.get("paciente_id")
+
+    if not paciente_id:
+        return JsonResponse({
+            "resultados": []
+        })
+
+    agendamentos = AgendaConsulta.objects.filter(
+        paciente_id=paciente_id
+    ).exclude(
+        status="CANCELADA"
+    ).select_related(
+        "paciente"
+    ).order_by(
+        "data",
+        "hora"
+    )
+
+    resultados = []
+
+    for item in agendamentos:
+        resultados.append({
+            "id": item.id,
+            "paciente": item.paciente.nome if item.paciente else "",
+            "data": item.data.strftime("%d/%m/%Y"),
+            "hora": item.hora.strftime("%H:%M") if item.hora else "",
+            "status": item.status,
+        })
+
+    return JsonResponse({
+        "resultados": resultados
+    })
