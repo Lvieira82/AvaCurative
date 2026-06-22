@@ -884,3 +884,51 @@ body{
         grid-template-columns:1fr;
     }
 }
+@media (max-width: 768px){
+
+    .agenda-layout,
+    .cards-agenda-superior{
+        display:block;
+        width:100%;
+    }
+
+    .agenda-formulario,
+    .agenda-lista,
+    .consultar-agendados,
+    .form-card{
+        width:100%;
+        max-width:100%;
+        margin:0 0 20px 0;
+    }
+
+    .cards-agenda-superior{
+        margin-bottom:20px;
+    }
+
+    .agenda-lista{
+        padding:18px;
+    }
+
+    .form-card.profissional{
+        margin-left:0;
+        margin-right:0;
+    }
+
+    .container,
+    main,
+    .content{
+        width:100%;
+        max-width:100%;
+        padding-left:18px;
+        padding-right:18px;
+        overflow-x:hidden;
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+        width:100%;
+        max-width:100%;
+    }
+}
