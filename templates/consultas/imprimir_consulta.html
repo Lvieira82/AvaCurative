@@ -320,13 +320,16 @@ body{
     height:auto;
 }
 .rodape-final{
-    position:absolute;
-    left:8mm;
-    right:8mm;
-    bottom:8mm;
+    position:relative;
+    margin-top:25px;
+    min-height:35mm;
+
     display:flex;
     align-items:flex-end;
     justify-content:center;
+
+    page-break-inside:avoid;
+    break-inside:avoid;
 }
 
 .obs-legal{
