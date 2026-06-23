@@ -17,16 +17,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = config(
-    "SECRET_KEY",
-    default="django-insecure-dev-key"
-)
-
-DEBUG = config(
-    "DEBUG",
-    default=True,
-    cast=bool
-)
+SECRET_KEY = config("SECRET_KEY")
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "avacurative.onrender.com",
