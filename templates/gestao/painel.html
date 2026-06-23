@@ -1,49 +1,156 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}
-Gestão
-{% endblock %}
+{% block title %}Gestão{% endblock %}
 
 {% block content %}
 
-<h1>Painel de Gestão</h1>
+<div class="gestao-container">
 
-<div class="cards-dashboard">
-
-    <div class="card-info">
-        <h3>{{ total_pacientes }}</h3>
-        <p>Pacientes cadastrados</p>
+    <div class="gestao-titulo">
+        <span>📊</span>
+        <div>
+            <h1>Painel de Gestão</h1>
+            <p>Visão geral do seu consultório</p>
+        </div>
     </div>
 
-    <div class="card-info">
-        <h3>{{ total_consultas }}</h3>
-        <p>Consultas registradas</p>
+    <div class="cards-resumo">
+
+        <div class="card-resumo">
+            <div class="icone-card verde">👥</div>
+            <div>
+                <h2>{{ total_pacientes }}</h2>
+                <p>Total de Pacientes</p>
+            </div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="icone-card azul">📅</div>
+            <div>
+                <h2>{{ total_consultas_mes }}</h2>
+                <p>Consultas no Mês</p>
+            </div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="icone-card roxo">📋</div>
+            <div>
+                <h2>{{ total_agendamentos }}</h2>
+                <p>Agendamentos Futuros</p>
+            </div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="icone-card amarelo">❌</div>
+            <div>
+                <h2>{{ total_canceladas }}</h2>
+                <p>Consultas Canceladas</p>
+            </div>
+        </div>
+
     </div>
 
-    <div class="card-info">
-        <h3>{{ usuarios_ativos }}</h3>
-        <p>Usuários ativos</p>
+    <div class="graficos-grid">
+
+        <div class="grafico-card">
+            <h2>📈 Consultas por Mês</h2>
+            <canvas id="graficoConsultas"></canvas>
+        </div>
+
+        <div class="grafico-card">
+            <h2>🏷️ Origem dos Pacientes</h2>
+            <canvas id="graficoOrigem"></canvas>
+        </div>
+
+    </div>
+
+    <div class="tabela-card">
+        <h2>📋 Últimos Agendamentos</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in ultimos_agendamentos %}
+                <tr>
+                    <td>{{ item.data|date:"d/m/Y" }}</td>
+                    <td>{{ item.hora|time:"H:i" }}</td>
+                    <td>{{ item.paciente.nome }}</td>
+                    <td>
+                        <span class="status">{{ item.status }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Nenhum agendamento encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 </div>
 
-<div class="grid">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <a href="/admin/auth/user/" class="card">
-        <h3>Usuários</h3>
-        <p>Gerenciar contas e permissões</p>
-    </a>
+<script>
+const origemLabels = {{ origem_labels|safe }};
+const origemValores = {{ origem_valores|safe }};
 
-    <a href="/admin/" class="card">
-        <h3>Auditoria</h3>
-        <p>Histórico administrativo</p>
-    </a>
+const mesesLabels = {{ meses_labels|safe }};
+const mesesValores = {{ meses_valores|safe }};
 
-    <a href="{% url 'backup_sqlite' %}" class="card">
-        <h3>Backup</h3>
-        <p>Baixar banco SQLite</p>
-    </a>
+new Chart(document.getElementById("graficoOrigem"), {
+    type: "pie",
+    data: {
+        labels: origemLabels,
+        datasets: [{
+            data: origemValores,
+            backgroundColor: [
+                "#4f9b45",
+                "#2f80ed",
+                "#f2c94c",
+                "#9b51e0",
+                "#eb5757"
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: "right"
+            }
+        }
+    }
+});
 
-</div>
+new Chart(document.getElementById("graficoConsultas"), {
+    type: "line",
+    data: {
+        labels: mesesLabels,
+        datasets: [{
+            label: "Consultas",
+            data: mesesValores,
+            borderColor: "#4f9b45",
+            backgroundColor: "rgba(79,155,69,.15)",
+            tension: .3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
+
 
 {% endblock %}

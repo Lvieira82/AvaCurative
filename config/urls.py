@@ -7,7 +7,6 @@ from usuarios.views import login_view, logout_view, cadastro_usuario
 from pacientes.views import home, cadastrar_paciente, buscar_paciente, arquivo_paciente, autocomplete_pacientes,historico_consultas
 from consultas.views import nova_consulta, editar_consulta, prescrever_consulta
 from gestao.views import painel_gestao
-from gestao.views import painel_gestao, backup_sqlite
 from consultas.views import historico_consultas
 from consultas.views import (
     nova_consulta,
@@ -42,8 +41,6 @@ urlpatterns = [
     path('consulta/nova/<int:paciente_id>/', nova_consulta, name='nova_consulta'),
     path('consulta/editar/<int:id>/', editar_consulta, name='editar_consulta'),
     path('gestao/', painel_gestao, name='painel_gestao'),
-    path("gestao/", painel_gestao, name="painel_gestao"),
-    path("gestao/backup/", backup_sqlite, name="backup_sqlite"),
     path("agenda/", agenda, name="agenda"),
     path("agenda/novo/", novo_agendamento, name="novo_agendamento"),
     path("agenda/<int:id>/realizada/", marcar_realizada, name="marcar_realizada"),
