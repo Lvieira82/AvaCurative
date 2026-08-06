@@ -470,7 +470,10 @@ def cancelar_agendamento(request, id):
 def detalhe_consulta(request, id):
 
     consulta = get_object_or_404(
-        Consulta,
+        Consulta.objects.prefetch_related(
+            "fotos",
+            "prescricoes_consulta",
+        ),
         id=id
     )
 
@@ -494,8 +497,12 @@ def detalhe_consulta(request, id):
             "consulta": consulta,
             "paciente": consulta.paciente,
             "pode_editar": pode_editar,
+            "prescricoes": consulta.prescricoes_consulta.all(),
+            "fotos": consulta.fotos.all(),
         }
     )
+
+
 @login_required
 def imprimir_consulta(request, id):
 
