@@ -165,7 +165,15 @@ class FotoConsulta(models.Model):
     )
 
     def __str__(self):
-        return f"Foto da consulta {self.consulta.id}"
+
+        if self.consulta and self.consulta.paciente:
+    
+            return (
+                f"{self.consulta.paciente.nome} - "
+                f"{self.criada_em.strftime('%d/%m/%Y %H:%M')}"
+            )
+    
+        return f"Foto {self.id}"
 class Prescricao(models.Model):
 
     paciente = models.ForeignKey(
