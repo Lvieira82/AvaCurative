@@ -546,13 +546,7 @@ def prescrever_consulta(request, id):
 
     if request.method == "POST":
 
-        if prescricao:
-            form = PrescricaoForm(
-                request.POST,
-                instance=prescricao
-            )
-        else:
-            form = PrescricaoForm(request.POST)
+        form = PrescricaoForm(request.POST)
 
         if form.is_valid():
 
