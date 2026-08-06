@@ -529,6 +529,7 @@ def imprimir_consulta(request, id):
             "fotos": fotos,
         }
     )
+
 @login_required
 def prescrever_consulta(request, id):
 
@@ -537,40 +538,11 @@ def prescrever_consulta(request, id):
         id=id
     )
 
-    return render(
-        request,
-        "consultas/prescricao.html",
-        {
-            "consulta": consulta,
-            "paciente": consulta.paciente,
-        }
-    )
-
-@login_required
-def prescrever_paciente(request, id):
-
-    paciente = get_object_or_404(
-        Paciente,
-        id=id
-    )
-
-    # procura a consulta mais recente do paciente
-    consulta = (
-        Consulta.objects
-        .filter(paciente=paciente)
-        .order_by("-criada_em")
+    prescricao = (
+        Prescricao.objects
+        .filter(consulta=consulta)
         .first()
     )
-
-    # tenta reutilizar uma prescrição já existente
-    prescricao = None
-
-    if consulta:
-        prescricao = (
-            Prescricao.objects
-            .filter(consulta=consulta)
-            .first()
-        )
 
     if request.method == "POST":
 
@@ -585,17 +557,13 @@ def prescrever_paciente(request, id):
         if form.is_valid():
 
             prescricao = form.save(commit=False)
-
-            prescricao.paciente = paciente
-
-            if consulta:
-                prescricao.consulta = consulta
-
+            prescricao.consulta = consulta
+            prescricao.paciente = consulta.paciente
             prescricao.save()
 
             return redirect(
-                "arquivo_paciente",
-                id=paciente.id
+                "detalhe_consulta",
+                id=consulta.id
             )
 
     else:
@@ -609,10 +577,42 @@ def prescrever_paciente(request, id):
         "consultas/prescricao.html",
         {
             "form": form,
-            "paciente": paciente,
             "consulta": consulta,
+            "paciente": consulta.paciente,
             "prescricao": prescricao,
         }
+    )
+
+@login_required
+def prescrever_paciente(request, id):
+
+    paciente = get_object_or_404(
+        Paciente,
+        id=id
+    )
+
+    consulta = (
+        Consulta.objects
+        .filter(paciente=paciente)
+        .order_by("-criada_em")
+        .first()
+    )
+
+    if not consulta:
+
+        messages.warning(
+            request,
+            "Cadastre uma consulta antes de emitir uma prescrição."
+        )
+
+        return redirect(
+            "arquivo_paciente",
+            id=paciente.id
+        )
+
+    return redirect(
+        "prescrever_consulta",
+        id=consulta.id
     )
     
 @login_required
