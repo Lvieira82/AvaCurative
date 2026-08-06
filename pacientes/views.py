@@ -4,8 +4,11 @@ from django.contrib.auth.decorators import login_required
 from .models import Paciente
 from .forms import PacienteForm
 from django.http import JsonResponse
-from consultas.models import Consulta
-
+from consultas.models import (
+    Consulta,
+    Prescricao,
+    FotoConsulta,
+)
 
 @login_required
 def home(request):
@@ -86,10 +89,25 @@ def arquivo_paciente(request, id):
     consultas = (
         Consulta.objects
         .filter(paciente=paciente)
+        .prefetch_related(
+            "fotos",
+            "prescricoes_consulta"
+        )
         .order_by("-criada_em")
     )
 
-    tem_consultas = consultas.exists()
+    prescricoes = (
+        Prescricao.objects
+        .filter(paciente=paciente)
+        .order_by("-criada_em")
+    )
+
+    fotos = (
+        FotoConsulta.objects
+        .filter(consulta__paciente=paciente)
+        .select_related("consulta")
+        .order_by("-enviada_em")
+    )
 
     return render(
         request,
@@ -97,10 +115,11 @@ def arquivo_paciente(request, id):
         {
             "paciente": paciente,
             "consultas": consultas,
-            "tem_consultas": tem_consultas,
+            "prescricoes": prescricoes,
+            "fotos": fotos,
+            "tem_consultas": consultas.exists(),
         }
     )
-
 
 @login_required
 def historico_consultas(request, id):
