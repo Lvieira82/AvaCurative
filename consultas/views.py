@@ -16,7 +16,7 @@ from .models import AgendaConsulta
 from .models import Consulta
 from datetime import datetime, timedelta
 from .models import Consulta, AuditoriaConsulta
-from .models import Consulta, AuditoriaConsulta, FotoConsulta
+from .models import Consulta, AuditoriaConsulta, FotoConsulta, Prescricao
 from django.utils import timezone
 from django.contrib import messages
 from .forms import ConsultaForm, PrescricaoForm
