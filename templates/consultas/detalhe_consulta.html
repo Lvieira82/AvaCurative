@@ -1,3 +1,73 @@
+.prescricao-box{
+
+    background:#f7fbf7;
+
+    border-left:4px solid #2f6d43;
+
+    padding:15px;
+
+    margin:15px 0;
+
+    border-radius:8px;
+
+}
+
+.prescricao-box small{
+
+    display:block;
+
+    margin-top:10px;
+
+    color:#666;
+
+}
+
+.galeria-consulta{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin:20px 0;
+
+}
+
+.foto-consulta{
+
+    width:180px;
+
+    max-width:100%;
+
+    height:auto;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+    cursor:pointer;
+
+}
+
+@media(max-width:768px){
+
+    .galeria-consulta{
+
+        justify-content:center;
+
+    }
+
+    .foto-consulta{
+
+        width:100%;
+
+        max-width:320px;
+
+    }
+
+}
+
 {% extends 'base.html' %}
 
 {% block title %}
@@ -39,7 +109,50 @@ Consulta
 <p>
     {{ consulta.descricao|linebreaks }}
 </p>
+<hr>
 
+{% if prescricoes %}
+
+<h3>📋 Prescrição</h3>
+
+{% for prescricao in prescricoes %}
+
+<div class="prescricao-box">
+
+    {{ prescricao.texto|linebreaks }}
+
+    <small>
+
+        Emitida em
+        {{ prescricao.criada_em|date:"d/m/Y H:i" }}
+
+    </small>
+
+</div>
+
+{% endfor %}
+
+{% endif %}
+{% if fotos %}
+
+<hr>
+
+<h3>📷 Fotos da Consulta</h3>
+
+<div class="galeria-consulta">
+
+    {% for foto in fotos %}
+
+        <img
+            src="{{ foto.imagem.url }}"
+            class="foto-consulta"
+            alt="Foto da consulta">
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
 {% if consulta.fotos.all %}
 
 <form
