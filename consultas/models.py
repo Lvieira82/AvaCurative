@@ -169,8 +169,8 @@ class FotoConsulta(models.Model):
         if self.consulta and self.consulta.paciente:
     
             return (
-                f"{self.consulta.paciente.nome} - "
-                f"{self.criada_em.strftime('%d/%m/%Y %H:%M')}"
+                f"{self.consulta.paciente.nome} "
+                f"(Consulta {self.consulta.id})"
             )
     
         return f"Foto {self.id}"
