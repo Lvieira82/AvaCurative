@@ -538,11 +538,7 @@ def prescrever_consulta(request, id):
         id=id
     )
 
-    prescricao = (
-        Prescricao.objects
-        .filter(consulta=consulta)
-        .first()
-    )
+    paciente = consulta.paciente
 
     if request.method == "POST":
 
@@ -551,8 +547,10 @@ def prescrever_consulta(request, id):
         if form.is_valid():
 
             prescricao = form.save(commit=False)
+
+            prescricao.paciente = paciente
             prescricao.consulta = consulta
-            prescricao.paciente = consulta.paciente
+
             prescricao.save()
 
             return redirect(
@@ -562,9 +560,7 @@ def prescrever_consulta(request, id):
 
     else:
 
-        form = PrescricaoForm(
-            instance=prescricao
-        )
+        form = PrescricaoForm()
 
     return render(
         request,
@@ -572,11 +568,10 @@ def prescrever_consulta(request, id):
         {
             "form": form,
             "consulta": consulta,
-            "paciente": consulta.paciente,
-            "prescricao": prescricao,
+            "paciente": paciente,
+            "prescricao": None,
         }
     )
-
 @login_required
 def prescrever_paciente(request, id):
 
