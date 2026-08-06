@@ -545,6 +545,7 @@ def prescrever_consulta(request, id):
             "paciente": consulta.paciente,
         }
     )
+
 @login_required
 def prescrever_paciente(request, id):
 
@@ -553,16 +554,43 @@ def prescrever_paciente(request, id):
         id=id
     )
 
+    # procura a consulta mais recente do paciente
+    consulta = (
+        Consulta.objects
+        .filter(paciente=paciente)
+        .order_by("-criada_em")
+        .first()
+    )
+
+    # tenta reutilizar uma prescrição já existente
+    prescricao = None
+
+    if consulta:
+        prescricao = (
+            Prescricao.objects
+            .filter(consulta=consulta)
+            .first()
+        )
+
     if request.method == "POST":
 
-        form = PrescricaoForm(
-            request.POST
-        )
+        if prescricao:
+            form = PrescricaoForm(
+                request.POST,
+                instance=prescricao
+            )
+        else:
+            form = PrescricaoForm(request.POST)
 
         if form.is_valid():
 
             prescricao = form.save(commit=False)
+
             prescricao.paciente = paciente
+
+            if consulta:
+                prescricao.consulta = consulta
+
             prescricao.save()
 
             return redirect(
@@ -572,7 +600,9 @@ def prescrever_paciente(request, id):
 
     else:
 
-        form = PrescricaoForm()
+        form = PrescricaoForm(
+            instance=prescricao
+        )
 
     return render(
         request,
@@ -580,8 +610,11 @@ def prescrever_paciente(request, id):
         {
             "form": form,
             "paciente": paciente,
+            "consulta": consulta,
+            "prescricao": prescricao,
         }
     )
+    
 @login_required
 def horarios_disponiveis(request):
 
