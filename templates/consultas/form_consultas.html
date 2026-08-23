@@ -20,7 +20,12 @@ Nova Consulta
         </h1>
     </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        data-consulta-id="{{ consulta.id }}"
+        data-autosave-url="{% url 'autosave_consulta' consulta.id %}"
+    >
         {% csrf_token %}
 
         <label>Diagnóstico Clínico</label>
@@ -80,9 +85,17 @@ Nova Consulta
                 Salvar Consulta
             {% endif %}
         </button>
+         <div id="autosave-status"
+             style="margin:10px 0; font-size:14px;">
+            Rascunho aguardando salvamento...
+        </div>
+
+        <!-- botão existente de salvar definitivamente -->
 
     </form>
 
 </div>
+
+<script src="{% static 'js/consulta_autosave.js' %}"></script>
 
 {% endblock %}
