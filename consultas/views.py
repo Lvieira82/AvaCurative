@@ -217,41 +217,27 @@ def bloquear_horario(request):
 
 @login_required
 def nova_consulta(request, paciente_id):
-
-    paciente = get_object_or_404(
-        Paciente,
-        id=paciente_id
-    )
+    paciente = get_object_or_404(Paciente, id=paciente_id)
 
     if request.method == "POST":
-
-        form = ConsultaForm(
-            request.POST,
-            request.FILES
-        )
-
+        form = ConsultaForm(request.POST, request.FILES)
         fotos = request.FILES.getlist("fotos")
 
         if len(fotos) > 6:
-
             messages.error(
                 request,
                 "É permitido anexar no máximo 6 fotos."
             )
-
             return render(
                 request,
                 "consultas/form_consultas.html",
-                {
-                    "form": form,
-                    "paciente": paciente,
-                }
+                {"form": form, "paciente": paciente}
             )
 
         if form.is_valid():
-
             consulta = form.save(commit=False)
             consulta.paciente = paciente
+            consulta.status = "RASCUNHO"
             consulta.descricao = consulta.anamnese or ""
             consulta.save()
 
@@ -261,13 +247,11 @@ def nova_consulta(request, paciente_id):
                     imagem=foto
                 )
 
-            return redirect(
-                "arquivo_paciente",
-                id=paciente.id
-            )
+            # A consulta já existe no banco como rascunho.
+            # O navegador continuará fazendo autosave nela.
+            return redirect("editar_consulta", id=consulta.id)
 
     else:
-
         form = ConsultaForm()
 
     return render(
@@ -279,37 +263,20 @@ def nova_consulta(request, paciente_id):
         }
     )
 
+
 @login_required
 def editar_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
 
-    consulta = get_object_or_404(
-        Consulta,
-        id=id
-    )
-
-    data_consulta = timezone.localtime(
-        consulta.criada_em
-    ).date()
-
-    hoje = timezone.localtime().date()
-
-    if data_consulta != hoje:
-
+    if not consulta.pode_editar():
         messages.error(
             request,
             "Esta consulta não pode mais ser editada."
         )
-
-        return redirect(
-            "detalhe_consulta",
-            id=consulta.id
-        )
+        return redirect("detalhe_consulta", id=consulta.id)
 
     if request.method == "POST":
-
-        consulta_antiga = Consulta.objects.get(
-            id=consulta.id
-        )
+        consulta_antiga = Consulta.objects.get(id=consulta.id)
 
         form = ConsultaForm(
             request.POST,
@@ -318,25 +285,24 @@ def editar_consulta(request, id):
         )
 
         fotos_novas = request.FILES.getlist("fotos")
-
         total_atual = consulta.fotos.count()
 
         if total_atual + len(fotos_novas) > 6:
-
             messages.error(
                 request,
                 "A consulta pode ter no máximo 6 fotos."
             )
-
-            return redirect(
-                "editar_consulta",
-                id=consulta.id
-            )
+            return redirect("editar_consulta", id=consulta.id)
 
         if form.is_valid():
-
             consulta_atualizada = form.save(commit=False)
-            consulta_atualizada.descricao = consulta_atualizada.anamnese or ""
+            consulta_atualizada.descricao = (
+                consulta_atualizada.anamnese or ""
+            )
+
+            consulta_atualizada.status = "DEFINITIVA"
+            consulta_atualizada.finalizada_em = timezone.now()
+            consulta_atualizada.finalizada_por = request.user
             consulta_atualizada.save()
 
             for foto in fotos_novas:
@@ -348,23 +314,23 @@ def editar_consulta(request, id):
             AuditoriaConsulta.objects.create(
                 consulta=consulta_atualizada,
                 usuario=request.user,
-
                 descricao_anterior=consulta_antiga.descricao,
                 descricao_nova=consulta_atualizada.descricao,
-
                 diabetes_anterior=consulta_antiga.diabetes,
                 diabetes_novo=consulta_atualizada.diabetes,
-
                 hipertensao_anterior=consulta_antiga.hipertensao,
                 hipertensao_novo=consulta_atualizada.hipertensao,
-
-                doenca_cronica_anterior=consulta_antiga.doenca_cronica,
-                doenca_cronica_novo=consulta_atualizada.doenca_cronica,
+                doenca_cronica_anterior=(
+                    consulta_antiga.doenca_cronica
+                ),
+                doenca_cronica_novo=(
+                    consulta_atualizada.doenca_cronica
+                ),
             )
 
             messages.success(
                 request,
-                "Consulta atualizada com sucesso."
+                "Consulta salva definitivamente com sucesso."
             )
 
             return redirect(
@@ -373,10 +339,7 @@ def editar_consulta(request, id):
             )
 
     else:
-
-        form = ConsultaForm(
-            instance=consulta
-        )
+        form = ConsultaForm(instance=consulta)
 
     return render(
         request,
@@ -386,8 +349,10 @@ def editar_consulta(request, id):
             "consulta": consulta,
             "paciente": consulta.paciente,
             "editando": True,
+            "pode_editar": consulta.pode_editar(),
         }
     )
+
 @login_required
 def agenda(request):
 
@@ -468,7 +433,6 @@ def cancelar_agendamento(request, id):
 
 @login_required
 def detalhe_consulta(request, id):
-
     consulta = get_object_or_404(
         Consulta.objects.prefetch_related(
             "fotos",
@@ -477,18 +441,7 @@ def detalhe_consulta(request, id):
         id=id
     )
 
-    agora = timezone.localtime()
-
-    fim_do_dia = timezone.localtime(
-        consulta.criada_em
-    ).replace(
-        hour=23,
-        minute=59,
-        second=59,
-        microsecond=0
-    )
-
-    pode_editar = agora <= fim_do_dia
+    pode_editar = consulta.pode_editar()
 
     return render(
         request,
@@ -501,7 +454,6 @@ def detalhe_consulta(request, id):
             "fotos": consulta.fotos.all(),
         }
     )
-
 
 @login_required
 def imprimir_consulta(request, id):
@@ -748,4 +700,75 @@ def consultar_agendamentos_paciente(request):
 
     return JsonResponse({
         "resultados": resultados
+    })
+
+def _dados_consulta_do_post(request):
+    """
+    Extrai somente os campos da Consulta que podem ser
+    salvos pelo autosave/finalização.
+    """
+    campos = [
+        "diagnostico_clinico",
+        "anamnese",
+        "conduta",
+        "diabetes",
+        "hipertensao",
+        "doenca_cronica",
+    ]
+
+    dados = {}
+
+    for campo in campos:
+        if campo in request.POST:
+            if campo in ("diabetes", "hipertensao", "doenca_cronica"):
+                dados[campo] = request.POST.get(campo) in ("on", "true", "1")
+            else:
+                dados[campo] = request.POST.get(campo, "")
+
+    return dados
+
+
+def _aplicar_dados_consulta(consulta, dados):
+    for campo, valor in dados.items():
+        setattr(consulta, campo, valor)
+
+    # O sistema atual usa descricao como espelho da anamnese.
+    consulta.descricao = consulta.anamnese or ""
+
+
+@login_required
+def autosave_consulta(request, id):
+    """
+    Salva silenciosamente o rascunho.
+    NÃO cria AuditoriaConsulta.
+    NÃO finaliza a consulta.
+    """
+    if request.method != "POST":
+        return JsonResponse(
+            {"ok": False, "erro": "Método não permitido."},
+            status=405
+        )
+
+    consulta = get_object_or_404(Consulta, id=id)
+
+    if consulta.status == "DEFINITIVA":
+        return JsonResponse(
+            {
+                "ok": False,
+                "bloqueada": True,
+                "erro": "Esta consulta já foi finalizada."
+            },
+            status=403
+        )
+
+    dados = _dados_consulta_do_post(request)
+    _aplicar_dados_consulta(consulta, dados)
+    consulta.save()
+
+    return JsonResponse({
+        "ok": True,
+        "status": "RASCUNHO",
+        "salvo_em": timezone.localtime(
+            consulta.atualizada_em
+        ).strftime("%H:%M:%S"),
     })
