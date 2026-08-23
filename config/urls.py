@@ -26,6 +26,7 @@ from consultas.views import (
     desbloquear_dia,
     desmarcar_consulta_agendada,
     consultar_agendamentos_paciente,
+    autosave_consulta,
 
     
 )
@@ -61,7 +62,8 @@ urlpatterns = [
     path("agenda/desbloquear-dia/", desbloquear_dia, name="desbloquear_dia"),
     path("agenda/desmarcar/<int:id>/", desmarcar_consulta_agendada, name="desmarcar_consulta_agendada"),
     path("agenda/consultar-agendados/", consultar_agendamentos_paciente, name="consultar_agendamentos_paciente"),
-        
+    path("consulta/<int:id>/autosave/", autosave_consulta, name="autosave_consulta"),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(
