@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Nova Consulta
@@ -23,9 +24,12 @@ Nova Consulta
     <form
         method="post"
         enctype="multipart/form-data"
-        data-consulta-id="{{ consulta.id }}"
-        data-autosave-url="{% url 'autosave_consulta' consulta.id %}"
+        {% if consulta %}
+            data-consulta-id="{{ consulta.id }}"
+            data-autosave-url="{% url 'autosave_consulta' consulta.id %}"
+        {% endif %}
     >
+
         {% csrf_token %}
 
         <label>Diagnóstico Clínico</label>
@@ -56,7 +60,10 @@ Nova Consulta
 
             <div class="fotos-consulta">
                 {% for foto in consulta.fotos.all %}
-                    <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
+                    <img
+                        src="{{ foto.imagem.url }}"
+                        alt="Foto da consulta"
+                    >
                 {% endfor %}
             </div>
         {% endif %}
@@ -78,19 +85,22 @@ Nova Consulta
 
         <small>Máximo de 6 fotos.</small>
 
+        <div
+            id="autosave-status"
+            style="margin:10px 0; font-size:14px;"
+        >
+            {% if consulta %}
+                Rascunho aguardando salvamento...
+            {% endif %}
+        </div>
+
         <button type="submit">
             {% if editando %}
-                Atualizar Consulta
+                Salvar Consulta Definitivamente
             {% else %}
                 Salvar Consulta
             {% endif %}
         </button>
-         <div id="autosave-status"
-             style="margin:10px 0; font-size:14px;">
-            Rascunho aguardando salvamento...
-        </div>
-
-        <!-- botão existente de salvar definitivamente -->
 
     </form>
 
