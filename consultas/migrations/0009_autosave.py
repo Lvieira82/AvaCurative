@@ -1,3 +1,4 @@
+
 from django.db import migrations, models
 import django.db.models.deletion
 
@@ -5,7 +6,10 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("consultas", "0008"),
+        (
+            "consultas",
+            "0008_prescricao_paciente_alter_consulta_paciente_and_more",
+        ),
     ]
 
     operations = [
