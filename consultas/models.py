@@ -45,7 +45,7 @@ class Consulta(models.Model):
         default=False,
         verbose_name="Doença crônica"
     )
-    
+
     descricao = models.TextField(
         blank=True,
         null=True,
@@ -59,56 +59,59 @@ class Consulta(models.Model):
     atualizada_em = models.DateTimeField(
         auto_now=True
     )
+
     status = models.CharField(
-    max_length=20,
-    choices=[
-        ("RASCUNHO", "Rascunho"),
-        ("DEFINITIVA", "Definitiva"),
-    ],
-    default="RASCUNHO",
-)
+        max_length=20,
+        choices=[
+            ("RASCUNHO", "Rascunho"),
+            ("DEFINITIVA", "Definitiva"),
+        ],
+        default="RASCUNHO",
+    )
 
-finalizada_em = models.DateTimeField(
-    null=True,
-    blank=True,
-)
+    finalizada_em = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
 
-finalizada_por = models.ForeignKey(
-    User,
-    on_delete=models.SET_NULL,
-    null=True,
-    blank=True,
-    related_name="consultas_finalizadas",
-)
+    finalizada_por = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="consultas_finalizadas",
+    )
 
-def pode_editar(self):
-    """
-    Rascunho: pode ser salvo enquanto estiver aberto.
-    Definitiva: só pode ser editada no mesmo dia da finalização.
-    """
-    agora = timezone.localtime()
+    def pode_editar(self):
+        """
+        Rascunho:
+        pode continuar sendo salvo pelo autosave.
 
-    if self.status == "RASCUNHO":
-        return True
-    
+        Definitiva:
+        somente pode ser editada no mesmo dia
+        da finalização.
+        """
+
+        agora = timezone.localtime()
+
+        if self.status == "RASCUNHO":
+            return True
+
         if not self.finalizada_em:
             return False
-    
-        return timezone.localtime(self.finalizada_em).date() == agora.date()
-    
-    
+
+        return (
+            timezone.localtime(
+                self.finalizada_em
+            ).date()
+            == agora.date()
+        )
+
     def __str__(self):
         return f"Consulta de {self.paciente.nome}"
-        
-    def pode_editar(self):
     
-        agora = timezone.localtime()
     
-        criada = timezone.localtime(
-            self.criada_em
-        )
-    
-        return agora.date() == criada.date()
+   
 
     
 class AuditoriaConsulta(models.Model):
