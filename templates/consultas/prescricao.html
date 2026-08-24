@@ -113,7 +113,6 @@ body{
     width:100%;
 }
 
-
 .texto-prescricao {
     width: 100%;
     min-height: 500px;
@@ -412,12 +411,15 @@ body{
 
 </div>
 <script>
-    const campo = document.getElementById("textoPrescricao");
+    // Django gera o textarea do ModelForm com id="id_texto".
+    // O código anterior procurava "textoPrescricao", que não existe,
+    // e por isso o conteúdo aparecia no banco mas chegava vazio na impressão.
+    const campo = document.getElementById("id_texto");
     const impressao = document.getElementById("textoImpressao");
 
     function atualizarTextoImpressao(){
         if(campo && impressao){
-            impressao.textContent = campo.value;
+            impressao.textContent = campo.value || "";
         }
     }
 
