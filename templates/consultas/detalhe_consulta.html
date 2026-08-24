@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block title %}
@@ -24,7 +23,6 @@ Consulta
     {% endif %}
 
     <div class="marcadores-consulta">
-
         {% if consulta.diabetes %}
             <span>DM</span>
         {% endif %}
@@ -33,110 +31,144 @@ Consulta
             <span>HAS</span>
         {% endif %}
 
+        {% if consulta.doenca_cronica %}
+            <span>Doença crônica</span>
+        {% endif %}
     </div>
 
     <hr>
 
-<p>
-    {{ consulta.descricao|linebreaks }}
-</p>
-<hr>
+    <!--
+        Mantemos a apresentação clínica completa.
+        O autosave agora grava separadamente diagnóstico, anamnese
+        e conduta; portanto o detalhe não deve depender somente de
+        consulta.descricao.
+    -->
 
-{% if prescricoes %}
+    {% if consulta.diagnostico_clinico %}
+        <div class="campo-consulta">
+            <strong>Diagnóstico Clínico</strong>
+            <div>{{ consulta.diagnostico_clinico|linebreaks }}</div>
+        </div>
+    {% endif %}
 
-<h3>📋 Prescrição</h3>
+    {% if consulta.anamnese %}
+        <div class="campo-consulta">
+            <strong>Anamnese</strong>
+            <div>{{ consulta.anamnese|linebreaks }}</div>
+        </div>
+    {% endif %}
 
-{% for prescricao in prescricoes %}
+    {% if consulta.conduta %}
+        <div class="campo-consulta">
+            <strong>Conduta / Evolução</strong>
+            <div>{{ consulta.conduta|linebreaks }}</div>
+        </div>
+    {% endif %}
 
-<div class="prescricao-box">
+    <!-- Compatibilidade com consultas antigas que utilizavam descricao -->
+    {% if consulta.descricao and not consulta.diagnostico_clinico and not consulta.anamnese and not consulta.conduta %}
+        <div class="campo-consulta">
+            <div>{{ consulta.descricao|linebreaks }}</div>
+        </div>
+    {% endif %}
 
-    {{ prescricao.texto|linebreaks }}
+    <hr>
 
-    <small>
+    {% if prescricoes %}
 
-        Emitida em
-        {{ prescricao.criada_em|date:"d/m/Y H:i" }}
+    <h3>📋 Prescrição</h3>
 
-    </small>
+    {% for prescricao in prescricoes %}
 
-</div>
+    <div class="prescricao-box">
 
-{% endfor %}
+        {{ prescricao.texto|linebreaks }}
 
-{% endif %}
-{% if fotos %}
+        <small>
+            Emitida em
+            {{ prescricao.criada_em|date:"d/m/Y H:i" }}
+        </small>
 
-<hr>
-
-<h3>📷 Fotos da Consulta</h3>
-
-<div class="galeria-consulta">
-
-    {% for foto in fotos %}
-
-        <img
-            src="{{ foto.imagem.url }}"
-            class="foto-consulta"
-            alt="Foto da consulta">
+    </div>
 
     {% endfor %}
 
-</div>
+    {% endif %}
 
-{% endif %}
-{% if consulta.fotos.all %}
+    {% if fotos %}
 
-<form
-    method="get"
-    action="{% url 'imprimir_consulta' consulta.id %}"
-    target="_blank"
-    class="form-impressao"
->
+    <hr>
 
-    <h3>Selecionar fotos para o PDF</h3>
-    <small>Escolha até 6 fotos para sair junto com a evolução.</small>
+    <h3>📷 Fotos da Consulta</h3>
 
-    <div class="fotos-selecao-pdf">
+    <div class="galeria-consulta">
 
-        {% for foto in consulta.fotos.all %}
-            <label class="foto-check-card">
-                <input
-                    type="checkbox"
-                    name="fotos"
-                    value="{{ foto.id }}"
-                    checked
-                >
+        {% for foto in fotos %}
 
-                <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
-            </label>
+            <img
+                src="{{ foto.imagem.url }}"
+                class="foto-consulta"
+                alt="Foto da consulta">
+
         {% endfor %}
 
     </div>
 
-    <button type="submit" class="btn btn-imprimir">
+    {% endif %}
+
+    {% if consulta.fotos.all %}
+
+    <form
+        method="get"
+        action="{% url 'imprimir_consulta' consulta.id %}"
+        target="_blank"
+        class="form-impressao"
+    >
+
+        <h3>Selecionar fotos para o PDF</h3>
+        <small>Escolha até 6 fotos para sair junto com a evolução.</small>
+
+        <div class="fotos-selecao-pdf">
+
+            {% for foto in consulta.fotos.all %}
+                <label class="foto-check-card">
+                    <input
+                        type="checkbox"
+                        name="fotos"
+                        value="{{ foto.id }}"
+                        checked
+                    >
+
+                    <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
+                </label>
+            {% endfor %}
+
+        </div>
+
+        <button type="submit" class="btn btn-imprimir">
+            🖨 Imprimir / PDF
+        </button>
+
+    </form>
+
+    {% else %}
+
+    <a
+        href="{% url 'imprimir_consulta' consulta.id %}"
+        class="btn btn-imprimir"
+        target="_blank"
+    >
         🖨 Imprimir / PDF
-    </button>
+    </a>
 
-</form>
+    {% endif %}
 
-{% else %}
-
-<a
-    href="{% url 'imprimir_consulta' consulta.id %}"
-    class="btn btn-imprimir"
-    target="_blank"
->
-    🖨 Imprimir / PDF
-</a>
-
-{% endif %}
-
-{% if pode_editar %}
-<a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-editar">
-    ✏️ Editar Consulta
-</a>
-{% endif %}
-
+    {% if pode_editar %}
+    <a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-editar">
+        ✏️ Editar Consulta
+    </a>
+    {% endif %}
 
 </div>
 
