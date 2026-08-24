@@ -6,6 +6,7 @@ from django.urls import path
 from usuarios.views import login_view, logout_view, cadastro_usuario
 from pacientes.views import home, cadastrar_paciente, buscar_paciente, arquivo_paciente, autocomplete_pacientes,historico_consultas
 from consultas.views import nova_consulta, editar_consulta, prescrever_consulta
+from consultas.prescricao_views import ver_prescricao
 from gestao.views import painel_gestao
 from consultas.views import historico_consultas
 from consultas.views import (
@@ -57,6 +58,7 @@ urlpatterns = [
     path("consulta/<int:id>/", detalhe_consulta, name="detalhe_consulta"),
     path("consulta/<int:id>/imprimir/", imprimir_consulta, name="imprimir_consulta"),
     path("consulta/<int:id>/prescrever/", prescrever_consulta, name="prescrever_consulta"),
+    path("consulta/<int:id>/prescricao/ver/", ver_prescricao, name="ver_prescricao"),
     path("paciente/<int:id>/prescrever/", prescrever_paciente, name="prescrever_paciente"),
     path("agenda/desbloquear/", desbloquear_horario, name="desbloquear_horario"),
     path("agenda/desbloquear-dia/", desbloquear_dia, name="desbloquear_dia"),
