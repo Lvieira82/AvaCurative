@@ -31,36 +31,36 @@ Histórico
 
             <div class="acoes-consulta">
 
-    <a
-        href="{% url 'detalhe_consulta' consulta.id %}"
-        class="btn btn-ver"
-    >
-        👁 Ver Consulta
-    </a>
+                <a
+                    href="{% url 'detalhe_consulta' consulta.id %}"
+                    class="btn btn-ver"
+                >
+                    👁 Ver Consulta
+                </a>
 
-    {% if consulta.pode_editar %}
+                {% if consulta.pode_editar %}
 
-        <a
-            href="{% url 'editar_consulta' consulta.id %}"
-            class="btn btn-editar"
-        >
-            ✏ Editar
-        </a>
+                    <a
+                        href="{% url 'editar_consulta' consulta.id %}"
+                        class="btn btn-editar"
+                    >
+                        ✏ Editar
+                    </a>
 
-    {% endif %}
+                {% endif %}
 
-    {% if consulta.prescricoes_consulta.exists %}
+                {% if consulta.prescricoes_consulta.exists %}
 
-        <a
-            href="{% url 'prescrever_consulta' consulta.id %}"
-            class="btn btn-prescrever"
-        >
-            📋 Ver Prescrição
-        </a>
+                    <a
+                        href="{% url 'ver_prescricao' consulta.id %}"
+                        class="btn btn-prescrever"
+                    >
+                        📋 Ver Prescrição
+                    </a>
 
-    {% endif %}
+                {% endif %}
 
-</div>
+            </div>
 
         </div>
 
