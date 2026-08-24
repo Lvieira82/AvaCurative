@@ -219,6 +219,19 @@ def bloquear_horario(request):
 def nova_consulta(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
 
+    # A consulta é criada imediatamente como RASCUNHO.
+    # Assim, quando o formulário abrir, ele já terá um ID real
+    # para que o autosave possa atualizar o banco a cada 10 segundos.
+    if request.method == "GET":
+        consulta = Consulta.objects.create(
+            paciente=paciente,
+            status="RASCUNHO",
+            descricao="",
+        )
+
+        return redirect("editar_consulta", id=consulta.id)
+
+    # Mantém compatibilidade caso esta view receba POST diretamente.
     if request.method == "POST":
         form = ConsultaForm(request.POST, request.FILES)
         fotos = request.FILES.getlist("fotos")
@@ -247,8 +260,6 @@ def nova_consulta(request, paciente_id):
                     imagem=foto
                 )
 
-            # A consulta já existe no banco como rascunho.
-            # O navegador continuará fazendo autosave nela.
             return redirect("editar_consulta", id=consulta.id)
 
     else:
