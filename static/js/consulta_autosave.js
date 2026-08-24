@@ -4,15 +4,20 @@
     const form = document.querySelector("form");
     if (!form) return;
 
-    const consultaId = form.dataset.consultaId;
-    const autosaveUrl = form.dataset.autosaveUrl;
-
-    if (!consultaId || !autosaveUrl) return;
+    let consultaId = form.dataset.consultaId;
+    let autosaveUrl = form.dataset.autosaveUrl;
 
     const statusEl = document.getElementById("autosave-status");
-    const storageKey = "ava_curative_consulta_" + consultaId;
+
+    // Enquanto a consulta ainda não existe no banco, usamos uma chave
+    // baseada na URL da nova consulta para preservar o que foi digitado.
+    const chaveNovaConsulta = "ava_curative_nova_" + window.location.pathname;
+    const storageKey = consultaId
+        ? "ava_curative_consulta_" + consultaId
+        : chaveNovaConsulta;
 
     let enviando = false;
+    let rascunhoCriado = Boolean(consultaId && autosaveUrl);
 
     function mostrarStatus(texto) {
         if (statusEl) {
@@ -24,7 +29,11 @@
         const dados = {};
 
         form.querySelectorAll("input, textarea, select").forEach(function (campo) {
-            if (!campo.name || campo.name === "csrfmiddlewaretoken" || campo.name === "fotos") {
+            if (
+                !campo.name ||
+                campo.name === "csrfmiddlewaretoken" ||
+                campo.name === "fotos"
+            ) {
                 return;
             }
 
@@ -52,6 +61,12 @@
         }
     }
 
+    function removerLocal() {
+        try {
+            localStorage.removeItem(storageKey);
+        } catch (e) {}
+    }
+
     function recuperarLocal() {
         try {
             const bruto = localStorage.getItem(storageKey);
@@ -61,7 +76,10 @@
             if (!pacote || !pacote.dados) return;
 
             Object.keys(pacote.dados).forEach(function (nome) {
-                const campo = form.querySelector('[name="' + CSS.escape(nome) + '"]');
+                const campo = form.querySelector(
+                    '[name="' + CSS.escape(nome) + '"]'
+                );
+
                 if (!campo) return;
 
                 if (campo.type === "checkbox") {
@@ -77,8 +95,49 @@
         }
     }
 
-    function enviarAutosave() {
-        if (enviando) return;
+    async function criarRascunhoNoServidor() {
+        if (rascunhoCriado || enviando) return;
+
+        enviando = true;
+        guardarLocal();
+        mostrarStatus("Criando rascunho seguro...");
+
+        const dados = new FormData(form);
+
+        try {
+            const resposta = await fetch(form.action || window.location.href, {
+                method: "POST",
+                body: dados,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "same-origin"
+            });
+
+            if (!resposta.ok) {
+                throw new Error("Não foi possível criar o rascunho.");
+            }
+
+            // nova_consulta redireciona para /consulta/editar/<id>/.
+            // O navegador passa então a trabalhar com o ID real da consulta.
+            if (resposta.redirected && resposta.url) {
+                removerLocal();
+                window.location.assign(resposta.url);
+                return;
+            }
+
+            throw new Error("O servidor não criou o rascunho.");
+        } catch (erro) {
+            mostrarStatus(
+                "⚠ Servidor indisponível — cópia local preservada"
+            );
+            console.warn(erro);
+            enviando = false;
+        }
+    }
+
+    async function enviarAutosave() {
+        if (!rascunhoCriado || !autosaveUrl || enviando) return;
 
         guardarLocal();
 
@@ -86,61 +145,75 @@
         dados.delete("fotos");
 
         enviando = true;
-        mostrarStatus("Salvando...");
+        mostrarStatus("Salvando rascunho...");
 
-        fetch(autosaveUrl, {
-            method: "POST",
-            body: dados,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            },
-            credentials: "same-origin"
-        })
-        .then(function (resposta) {
+        try {
+            const resposta = await fetch(autosaveUrl, {
+                method: "POST",
+                body: dados,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "same-origin"
+            });
+
             if (!resposta.ok) {
-                return resposta.json().catch(function () {
+                const json = await resposta.json().catch(function () {
                     return {};
-                }).then(function (json) {
-                    throw new Error(json.erro || "Falha no autosave.");
                 });
+
+                throw new Error(
+                    json.erro || "Falha no autosave."
+                );
             }
 
-            return resposta.json();
-        })
-        .then(function (resultado) {
+            const resultado = await resposta.json();
+
             if (resultado.ok) {
                 mostrarStatus(
                     "✓ Rascunho salvo automaticamente às " +
                     resultado.salvo_em
                 );
 
-                try {
-                    localStorage.removeItem(storageKey);
-                } catch (e) {}
+                removerLocal();
             }
-        })
-        .catch(function (erro) {
+        } catch (erro) {
             mostrarStatus(
                 "⚠ Sem sincronização com o servidor — cópia local preservada"
             );
             console.warn(erro);
-        })
-        .finally(function () {
+        } finally {
             enviando = false;
-        });
+        }
     }
 
-    // Guarda imediatamente no navegador enquanto a pessoa digita.
-    form.addEventListener("input", guardarLocal);
-    form.addEventListener("change", guardarLocal);
+    // Preserva localmente cada alteração imediatamente.
+    form.addEventListener("input", function () {
+        guardarLocal();
 
-    // Tenta recuperar uma cópia local ao abrir.
+        // Na primeira digitação, a consulta ainda não existe no banco.
+        // Criamos o rascunho imediatamente para que os próximos autosaves
+        // de 10 segundos tenham um ID real para atualizar.
+        if (!rascunhoCriado) {
+            criarRascunhoNoServidor();
+        }
+    });
+
+    form.addEventListener("change", function () {
+        guardarLocal();
+
+        if (!rascunhoCriado) {
+            criarRascunhoNoServidor();
+        }
+    });
+
     recuperarLocal();
 
     // Autosave oficial no banco a cada 10 segundos.
     setInterval(enviarAutosave, 10000);
 
-    // Faz uma tentativa antes de fechar/recarregar.
+    // Se faltar energia ou a página for fechada antes do primeiro envio,
+    // os dados continuam disponíveis no navegador.
     window.addEventListener("beforeunload", guardarLocal);
 
 })();
