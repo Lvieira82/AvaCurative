@@ -8,79 +8,33 @@ Nova Consulta
 {% block content %}
 
 <style>
-/* Ajustes exclusivos do formulário de consulta */
-.form-card.profissional form{
-    gap:9px;
-    margin-top:16px;
-}
-
-.form-card.profissional label{
-    margin-bottom:0;
-    font-size:13px;
-    line-height:1.25;
-}
-
-.form-card.profissional input,
-.form-card.profissional select,
-.form-card.profissional textarea{
-    padding:9px 11px;
-    font-size:13px;
-    line-height:1.4;
-    border-radius:8px;
-}
-
-.form-card.profissional textarea{
-    resize:vertical;
-}
-
-.form-card.profissional .campo-anamnese{
-    min-height:350px;
-    height:350px;
-}
-
-.form-card.profissional .campo-diagnostico{
-    min-height:58px;
-    height:58px;
-}
-
-.form-card.profissional .campo-conduta{
-    min-height:95px;
-    height:95px;
-}
-
-.form-card.profissional .checkbox-grid{
-    margin-top:4px;
-    margin-bottom:4px;
-}
-
-.form-card.profissional button[type="submit"]{
-    padding:11px 16px;
-    font-size:14px;
-}
-
+.form-card.profissional form{gap:9px;margin-top:16px;}
+.form-card.profissional label{margin-bottom:0;font-size:13px;line-height:1.25;}
+.form-card.profissional input,.form-card.profissional select,.form-card.profissional textarea{padding:9px 11px;font-size:13px;line-height:1.4;border-radius:8px;}
+.form-card.profissional textarea{resize:vertical;}
+.form-card.profissional .campo-anamnese{min-height:350px;height:350px;}
+.form-card.profissional .campo-diagnostico{min-height:58px;height:58px;}
+.form-card.profissional .campo-conduta{min-height:95px;height:95px;}
+.form-card.profissional .checkbox-grid{margin-top:4px;margin-bottom:4px;}
+.form-card.profissional button[type="submit"]{padding:11px 16px;font-size:14px;}
+.barra-formatacao-consulta{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px;margin:2px 0 8px;background:#f3f5f2;border:1px solid #dce4dc;border-radius:8px;}
+.barra-formatacao-consulta .btn-formatar{background:#fff;color:#173f2b;border:1px solid #c8d4ca;border-radius:7px;min-width:38px;padding:8px 11px;cursor:pointer;font-size:14px;font-weight:bold;}
+.barra-formatacao-consulta .btn-formatar:hover,.barra-formatacao-consulta .btn-formatar:focus{background:#e5eee6;}
+.barra-formatacao-consulta .btn-formatar[aria-pressed="true"]{background:#dce9dd;border-color:#315c35;}
+.barra-formatacao-consulta .separador{width:1px;height:26px;background:#ccd4cc;margin:0 2px;}
+.aviso-formatacao{font-size:11px;color:#526257;margin:0 0 8px;}
 @media(max-width:768px){
-    .form-card.profissional .campo-anamnese{
-        min-height:240px;
-        height:240px;
-    }
-
-    .form-card.profissional .campo-diagnostico{
-        min-height:54px;
-        height:54px;
-    }
-
-    .form-card.profissional .campo-conduta{
-        min-height:90px;
-        height:90px;
-    }
+ .form-card.profissional .campo-anamnese{min-height:240px;height:240px;}
+ .form-card.profissional .campo-diagnostico{min-height:54px;height:54px;}
+ .form-card.profissional .campo-conduta{min-height:90px;height:90px;}
+ .barra-formatacao-consulta{gap:5px;padding:6px;}
+ .barra-formatacao-consulta .btn-formatar{min-width:35px;padding:8px;}
 }
 </style>
 
 <div class="form-card profissional">
-
     <div class="form-title">
         <span class="icone">🩺</span>
-
         <h1>
             {% if editando %}
                 Editar Consulta - {{ paciente.nome }}
@@ -98,69 +52,55 @@ Nova Consulta
             data-autosave-url="{% url 'autosave_consulta' consulta.id %}"
         {% endif %}
     >
-
         {% csrf_token %}
 
-        <label>Diagnóstico Clínico</label>
+        <div class="barra-formatacao-consulta" role="toolbar" aria-label="Formatação dos campos da consulta">
+            <button type="button" class="btn-formatar" data-format="bold" title="Negrito" aria-label="Negrito" aria-pressed="false"><strong>B</strong></button>
+            <button type="button" class="btn-formatar" data-format="italic" title="Itálico" aria-label="Itálico" aria-pressed="false"><em>I</em></button>
+            <span class="separador" aria-hidden="true"></span>
+            <button type="button" class="btn-formatar" data-format="left" title="Alinhar à esquerda" aria-label="Alinhar à esquerda" aria-pressed="true">☰</button>
+            <button type="button" class="btn-formatar" data-format="center" title="Centralizar" aria-label="Centralizar" aria-pressed="false">≡</button>
+            <button type="button" class="btn-formatar" data-format="right" title="Alinhar à direita" aria-label="Alinhar à direita" aria-pressed="false">☷</button>
+            <button type="button" class="btn-formatar" data-format="justify" title="Justificar" aria-label="Justificar" aria-pressed="false">▤</button>
+        </div>
+        <p class="aviso-formatacao">Selecione primeiro o campo que deseja formatar. Os botões ajustam a apresentação do texto enquanto você preenche.</p>
+
+        <label for="{{ form.diagnostico_clinico.id_for_label }}">Diagnóstico Clínico</label>
         {{ form.diagnostico_clinico }}
 
-        <label>Anamnese</label>
+        <label for="{{ form.anamnese.id_for_label }}">Anamnese</label>
         {{ form.anamnese }}
 
-        <label>Outras condutas</label>
+        <label for="{{ form.conduta.id_for_label }}">Outras condutas</label>
         {{ form.conduta }}
 
         <div class="checkbox-grid">
-
             <label class="check-card">
                 {{ form.diabetes }}
                 <span>DM</span>
             </label>
-
             <label class="check-card">
                 {{ form.hipertensao }}
                 <span>HAS</span>
             </label>
-
         </div>
 
         {% if editando and consulta.fotos.all %}
             <label>Fotos já anexadas:</label>
-
             <div class="fotos-consulta">
                 {% for foto in consulta.fotos.all %}
-                    <img
-                        src="{{ foto.imagem.url }}"
-                        alt="Foto da consulta"
-                    >
+                    <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
                 {% endfor %}
             </div>
         {% endif %}
 
         <label>Adicionar novas fotos:</label>
-
-        <input
-            type="file"
-            id="inputFotosConsulta"
-            name="fotos"
-            multiple
-            accept="image/*"
-        >
-
-        <div
-            id="previewFotosConsulta"
-            class="preview-fotos-consulta"
-        ></div>
-
+        <input type="file" id="inputFotosConsulta" name="fotos" multiple accept="image/*">
+        <div id="previewFotosConsulta" class="preview-fotos-consulta"></div>
         <small>Máximo de 6 fotos.</small>
 
-        <div
-            id="autosave-status"
-            style="margin:6px 0; font-size:12px;"
-        >
-            {% if consulta %}
-                Rascunho aguardando salvamento...
-            {% endif %}
+        <div id="autosave-status" style="margin:6px 0;font-size:12px;">
+            {% if consulta %}Rascunho aguardando salvamento...{% endif %}
         </div>
 
         <button type="submit">
@@ -170,10 +110,84 @@ Nova Consulta
                 Salvar Consulta
             {% endif %}
         </button>
-
     </form>
-
 </div>
+
+<script>
+(function(){
+    const form = document.querySelector('.form-card.profissional form');
+    if (!form) return;
+
+    const campos = [
+        document.getElementById('{{ form.diagnostico_clinico.auto_id }}'),
+        document.getElementById('{{ form.anamnese.auto_id }}'),
+        document.getElementById('{{ form.conduta.auto_id }}')
+    ].filter(Boolean);
+
+    const botoes = document.querySelectorAll('.barra-formatacao-consulta [data-format]');
+    let campoAtivo = null;
+    const estado = new WeakMap();
+
+    function obterEstado(campo){
+        if(!estado.has(campo)){
+            estado.set(campo,{bold:false,italic:false,align:'left'});
+        }
+        return estado.get(campo);
+    }
+
+    function atualizarCampo(campo){
+        const e = obterEstado(campo);
+        campo.style.fontWeight = e.bold ? 'bold' : 'normal';
+        campo.style.fontStyle = e.italic ? 'italic' : 'normal';
+        campo.style.textAlign = e.align;
+    }
+
+    function atualizarBotoes(){
+        const e = campoAtivo ? obterEstado(campoAtivo) : null;
+        botoes.forEach(botao=>{
+            const tipo = botao.dataset.format;
+            let ativo = false;
+            if(e){
+                if(tipo==='bold') ativo=e.bold;
+                else if(tipo==='italic') ativo=e.italic;
+                else ativo=e.align===tipo;
+            }
+            botao.setAttribute('aria-pressed',String(ativo));
+        });
+    }
+
+    campos.forEach(campo=>{
+        campo.addEventListener('focus',()=>{
+            campoAtivo=campo;
+            atualizarBotoes();
+        });
+    });
+
+    botoes.forEach(botao=>{
+        botao.addEventListener('mousedown',event=>event.preventDefault());
+        botao.addEventListener('click',()=>{
+            if(!campoAtivo){
+                campoAtivo=campos[0] || null;
+                if(campoAtivo) campoAtivo.focus();
+            }
+            if(!campoAtivo) return;
+            const e=obterEstado(campoAtivo);
+            const tipo=botao.dataset.format;
+            if(tipo==='bold') e.bold=!e.bold;
+            else if(tipo==='italic') e.italic=!e.italic;
+            else e.align=tipo;
+            atualizarCampo(campoAtivo);
+            atualizarBotoes();
+            campoAtivo.focus();
+        });
+    });
+
+    if(campos.length){
+        campoAtivo=campos[0];
+        atualizarBotoes();
+    }
+})();
+</script>
 
 <script src="{% static 'js/consulta_autosave.js' %}"></script>
 
