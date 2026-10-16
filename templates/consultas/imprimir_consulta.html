@@ -4,350 +4,92 @@
 <head>
 <meta charset="UTF-8">
 <title>Consulta - {{ paciente.nome }}</title>
-
 <style>
-@page{
-    size:A4;
-    margin:8mm;
-}
-
+@page{size:A4;margin:8mm;}
 *{box-sizing:border-box;}
-
-body{
-    margin:0;
-    font-family:Arial, Helvetica, sans-serif;
-    color:#111;
-    background:white;
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-}
-
-.folha{
-    width:100%;
-    max-width:190mm;
-    margin:0 auto;
-    position:relative;
-    padding:0 12mm 3mm 12mm;
-}
-
-.faixa-superior{
-    background:#0b3f25;
-    color:white;
-    min-height:48px;
-    margin:0 -8mm 10px -8mm;
-    padding:6px 25px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.faixa-logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:15px;
-    font-weight:bold;
-}
-
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.folha{width:100%;max-width:190mm;margin:0 auto;position:relative;padding:0 12mm 3mm;}
+.faixa-superior{background:#0b3f25;color:white;min-height:48px;margin:0 -8mm 10px;padding:6px 25px;display:flex;justify-content:space-between;align-items:center;}
+.faixa-logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:bold;}
 .faixa-logo img{height:36px;width:auto;}
-
-.faixa-contato{
-    width:240px;
-    text-align:right;
-    font-size:10px;
-    line-height:1.3;
-    font-weight:bold;
-    padding-right:15px;
-}
-
-.folha-topo{
-    width:150px;
-    height:auto;
-    display:block;
-    margin:0 0 4px 0;
-}
-
-.topo{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-}
-
-.titulo h1{
-    color:#4f6842;
-    font-size:21px;
-    letter-spacing:1px;
-    margin:0;
-}
-
-.titulo h2{
-    color:#4f6842;
-    font-size:10px;
-    letter-spacing:1.5px;
-    margin:2px 0 8px;
-}
-
-.data{
-    font-size:12px;
-    font-weight:bold;
-    padding-right:6px;
-}
-
+.faixa-contato{width:240px;text-align:right;font-size:10px;line-height:1.3;font-weight:bold;padding-right:15px;}
+.folha-topo{width:150px;height:auto;display:block;margin:0 0 4px;}
+.topo{display:flex;justify-content:space-between;align-items:flex-start;}
+.titulo h1{color:#4f6842;font-size:21px;letter-spacing:1px;margin:0;}
+.titulo h2{color:#4f6842;font-size:10px;letter-spacing:1.5px;margin:2px 0 8px;}
+.data{font-size:12px;font-weight:bold;padding-right:6px;}
 .label{color:#4f6842;font-weight:bold;}
-
-.info p{
-    font-size:12px;
-    margin:3px 0;
-}
-
-.linha{
-    width:100%;
-    border-top:2px solid #4f6842;
-    margin:7px 0 9px 0;
-}
-
+.info p{font-size:12px;margin:3px 0;}
+.linha{width:100%;border-top:2px solid #4f6842;margin:7px 0 9px;}
 .secao{margin-top:4px;}
+.secao h3{color:#4f6842;font-size:10px;font-weight:bold;letter-spacing:1.2px;margin:7px 0 4px;text-transform:uppercase;}
+.texto{width:100%;font-size:12px;line-height:1.35;text-align:justify;text-justify:inter-word;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;}
+.marcadores-clinicos{margin-top:7px;margin-bottom:5px;}
+.marcadores-clinicos span{display:inline-block;background:#e7eee2;color:#4f6842;border:1px solid #cfd8c9;border-radius:14px;padding:3px 8px;margin-right:5px;font-size:10px;font-weight:bold;}
+.fotos{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;break-inside:avoid;page-break-inside:avoid;}
+.fotos img{width:100%;height:72px;object-fit:contain;border:1.5px solid #4f6842;border-radius:7px;background:white;}
 
-.secao h3{
-    color:#4f6842;
-    font-size:10px;
-    font-weight:bold;
-    letter-spacing:1.2px;
-    margin:7px 0 4px;
-    text-transform:uppercase;
-}
-
-.texto{
-    width:100%;
-    font-size:12px;
-    line-height:1.35;
-    text-align:justify;
-    text-justify:inter-word;
-    white-space:pre-wrap;
-    word-wrap:break-word;
-    overflow-wrap:break-word;
-}
-
-.marcadores-clinicos{
-    margin-top:7px;
-    margin-bottom:5px;
-}
-
-.marcadores-clinicos span{
-    display:inline-block;
-    background:#e7eee2;
-    color:#4f6842;
-    border:1px solid #cfd8c9;
-    border-radius:14px;
-    padding:3px 8px;
-    margin-right:5px;
-    font-size:10px;
-    font-weight:bold;
-}
-
-.fotos{
-    margin-top:8px;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:6px;
-    break-inside:avoid;
-}
-
-.fotos img{
-    width:100%;
-    height:72px;
-    object-fit:contain;
-    border:1.5px solid #4f6842;
-    border-radius:7px;
-    background:white;
-}
-
-/*
-  O rodapé permanece no fluxo normal do documento.
-  Assim, acompanha o texto e as fotos, sem ser empurrado artificialmente
-  para uma folha isolada por altura mínima ou margem excessiva.
-*/
-.rodape-final{
-    position:relative;
-    margin-top:8px;
-    min-height:0;
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
-    gap:8px;
-    break-inside:avoid;
-    page-break-inside:avoid;
-}
-
-.obs-legal{
-    width:145px;
-    flex:0 0 145px;
-    font-size:7px;
-    line-height:1.1;
-    text-align:center;
-    letter-spacing:.3px;
-}
-
-.assinatura-area{
-    width:230px;
-    flex:0 1 230px;
-    text-align:center;
-    z-index:2;
-}
-
-.assinatura-img{
-    width:68px !important;
-    height:auto !important;
-    display:block;
-    margin:0 auto -2px auto;
-}
-
-.linha-assinatura{
-    width:185px;
-    border-top:1px solid #555;
-    margin:0 auto 3px auto;
-}
-
-.dados-profissional{
-    font-size:8px;
-    line-height:1.12;
-    margin:0;
-    color:#315c35;
-}
-
-.folha-base{
-    width:95px;
-    height:auto;
-    flex:0 0 95px;
-    align-self:flex-end;
-}
-
-.btn-print{
-    position:fixed;
-    top:18px;
-    right:20px;
-    background:#315c35;
-    color:white;
-    padding:12px 18px;
-    border-radius:8px;
-    border:none;
-    font-weight:bold;
-    cursor:pointer;
-    z-index:9999;
-}
-
+/* No ecrã/PDF, reserva-se espaço flexível entre o conteúdo e o rodapé.
+   Na impressão, o rodapé fica no fim da página quando o conteúdo cabe;
+   documentos longos continuam a fluir normalmente para páginas seguintes. */
+.rodape-final{position:relative;margin-top:8px;min-height:35mm;display:flex;align-items:flex-end;justify-content:center;gap:8px;break-inside:avoid;page-break-inside:avoid;}
+.obs-legal{width:145px;flex:0 0 145px;font-size:7px;line-height:1.1;text-align:center;letter-spacing:.3px;}
+.assinatura-area{width:230px;flex:0 1 230px;text-align:center;z-index:2;}
+.assinatura-img{width:68px !important;height:auto !important;display:block;margin:0 auto -2px;}
+.linha-assinatura{width:185px;border-top:1px solid #555;margin:0 auto 3px;}
+.dados-profissional{font-size:8px;line-height:1.12;margin:0;color:#315c35;}
+.folha-base{width:95px;height:auto;flex:0 0 95px;align-self:flex-end;}
+.btn-print{position:fixed;top:18px;right:20px;background:#315c35;color:white;padding:12px 18px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;z-index:9999;}
 @media print{
-    .btn-print{display:none !important;}
-    body{margin:0;}
-    .folha{max-width:none;}
+ .btn-print{display:none !important;}
+ body{margin:0;}
+ .folha{max-width:none;min-height: calc(297mm - 16mm - 6mm);display:flex;flex-direction:column;}
+ .rodape-final{margin-top:auto;min-height:35mm;}
 }
-
-/* Telas estreitas: mantém o rodapé organizado sem alterar a impressão A4. */
 @media screen and (max-width:600px){
-    .folha{padding-left:5mm;padding-right:5mm;}
-    .faixa-superior{padding:6px 10px;}
-    .faixa-contato{width:auto;padding-right:0;font-size:9px;}
-    .titulo h1{font-size:18px;}
-    .rodape-final{gap:4px;}
-    .obs-legal{width:30%;flex-basis:30%;font-size:6px;}
-    .assinatura-area{width:45%;flex-basis:45%;}
-    .linha-assinatura{width:90%;}
-    .folha-base{width:20%;flex-basis:20%;}
+ .folha{padding-left:5mm;padding-right:5mm;}
+ .faixa-superior{padding:6px 10px;}
+ .faixa-contato{width:auto;padding-right:0;font-size:9px;}
+ .titulo h1{font-size:18px;}
+ .rodape-final{gap:4px;min-height:30mm;}
+ .obs-legal{width:30%;flex-basis:30%;font-size:6px;}
+ .assinatura-area{width:45%;flex-basis:45%;}
+ .linha-assinatura{width:90%;}
+ .folha-base{width:20%;flex-basis:20%;}
 }
 </style>
 </head>
-
 <body>
-
-<button onclick="window.print()" class="btn-print">
-    🖨 Imprimir / Salvar PDF
-</button>
-
+<button onclick="window.print()" class="btn-print">🖨 Imprimir / Salvar PDF</button>
 <div class="folha">
-
-    <div class="faixa-superior">
-        <div class="faixa-logo">
-            <img src="{% static 'img/logo_ava.png' %}" alt="Logo">
-            <span>Ava Curativos</span>
-        </div>
-
-        <div class="faixa-contato">
-            Contato: (75) 98141-9840<br>
-            Instagram: @enfaannavitoria
-        </div>
-    </div>
-
-    <img src="{% static 'img/folha_topo.png' %}" class="folha-topo" alt="">
-
-    <div class="topo">
-        <div class="titulo">
-            <h1>EVOLUÇÃO DE ENFERMAGEM</h1>
-            <h2>ESTOMATERAPEUTA</h2>
-        </div>
-
-        <div class="data">
-            DATA: {{ consulta.criada_em|date:"d/m/Y" }}
-        </div>
-    </div>
-
-    <div class="info">
-        <p><span class="label">PACIENTE:</span> {{ paciente.nome|upper }}</p>
-        <p><span class="label">TELEFONE:</span> {{ paciente.telefone }}</p>
-        <p>
-            <span class="label">DIAGNÓSTICO CLÍNICO:</span>
-            {{ consulta.diagnostico_clinico }}
-        </p>
-    </div>
-
-    <div class="linha"></div>
-
-    {% if consulta.anamnese %}
-    <div class="secao">
-        <h3>• ANAMNESE</h3>
-        <div class="texto">{{ consulta.anamnese|linebreaksbr }}</div>
-    </div>
-    {% endif %}
-
-    {% if consulta.conduta %}
-    <div class="secao">
-        <h3>• OUTRAS CONDUTAS</h3>
-        <div class="texto">{{ consulta.conduta|linebreaksbr }}</div>
-    </div>
-    {% endif %}
-
-    <div class="marcadores-clinicos">
-        {% if consulta.diabetes %}<span>DM</span>{% endif %}
-        {% if consulta.hipertensao %}<span>HAS</span>{% endif %}
-    </div>
-
-    {% if fotos %}
-    <div class="fotos">
-        {% for foto in fotos %}
-            <img src="{{ foto.imagem.url }}" alt="Foto da consulta">
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <div class="rodape-final">
-        <div class="obs-legal">
-            ART. 88. TODO PACIENTE OU SEU REPRESENTANTE LEGAL TEM O DIREITO DE SOLICITAR E RECEBER CÓPIA DO RESPECTIVO PRONTUÁRIO.
-        </div>
-
-        <div class="assinatura-area">
-            <img src="{% static 'img/assinatura.png' %}" class="assinatura-img" alt="Assinatura">
-            <div class="linha-assinatura"></div>
-            <p class="dados-profissional">
-                Enfa. Anna Vitória Alves<br>
-                Estomaterapeuta - COREN-BA: 778832ENF<br>
-                Feira de Santana-BA<br>
-                Contato: (75) 98141-9840<br>
-                Instagram: @enfaannavitoria
-            </p>
-        </div>
-
-        <img src="{% static 'img/folha_base.png' %}" class="folha-base" alt="">
-    </div>
-
+ <div class="faixa-superior">
+  <div class="faixa-logo"><img src="{% static 'img/logo_ava.png' %}" alt="Logo"><span>Ava Curativos</span></div>
+  <div class="faixa-contato">Contato: (75) 98141-9840<br>Instagram: @enfaannavitoria</div>
+ </div>
+ <img src="{% static 'img/folha_topo.png' %}" class="folha-topo" alt="">
+ <div class="topo">
+  <div class="titulo"><h1>EVOLUÇÃO DE ENFERMAGEM</h1><h2>ESTOMATERAPEUTA</h2></div>
+  <div class="data">DATA: {{ consulta.criada_em|date:"d/m/Y" }}</div>
+ </div>
+ <div class="info">
+  <p><span class="label">PACIENTE:</span> {{ paciente.nome|upper }}</p>
+  <p><span class="label">TELEFONE:</span> {{ paciente.telefone }}</p>
+  <p><span class="label">DIAGNÓSTICO CLÍNICO:</span> {{ consulta.diagnostico_clinico }}</p>
+ </div>
+ <div class="linha"></div>
+ {% if consulta.anamnese %}<div class="secao"><h3>• ANAMNESE</h3><div class="texto">{{ consulta.anamnese|linebreaksbr }}</div></div>{% endif %}
+ {% if consulta.conduta %}<div class="secao"><h3>• OUTRAS CONDUTAS</h3><div class="texto">{{ consulta.conduta|linebreaksbr }}</div></div>{% endif %}
+ <div class="marcadores-clinicos">{% if consulta.diabetes %}<span>DM</span>{% endif %}{% if consulta.hipertensao %}<span>HAS</span>{% endif %}</div>
+ {% if fotos %}<div class="fotos">{% for foto in fotos %}<img src="{{ foto.imagem.url }}" alt="Foto da consulta">{% endfor %}</div>{% endif %}
+ <div class="rodape-final">
+  <div class="obs-legal">ART. 88. TODO PACIENTE OU SEU REPRESENTANTE LEGAL TEM O DIREITO DE SOLICITAR E RECEBER CÓPIA DO RESPECTIVO PRONTUÁRIO.</div>
+  <div class="assinatura-area">
+   <img src="{% static 'img/assinatura.png' %}" class="assinatura-img" alt="Assinatura">
+   <div class="linha-assinatura"></div>
+   <p class="dados-profissional">Enfa. Anna Vitória Alves<br>Estomaterapeuta - COREN-BA: 778832ENF<br>Feira de Santana-BA<br>Contato: (75) 98141-9840<br>Instagram: @enfaannavitoria</p>
+  </div>
+  <img src="{% static 'img/folha_base.png' %}" class="folha-base" alt="">
+ </div>
 </div>
 </body>
 </html>
