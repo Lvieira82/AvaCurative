@@ -4,330 +4,130 @@
 <head>
 <meta charset="UTF-8">
 <title>Prescrição - {{ paciente.nome }}</title>
-
 <style>
-@page{
-    size:A4;
-    margin:8mm;
-}
-
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    font-family:Arial, Helvetica, sans-serif;
-    color:#111;
-    background:white;
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-}
-
-.folha{
-    width:100%;
-    max-width:190mm;
-    min-height:270mm;
-    margin:0 auto;
-    position:relative;
-    padding:0 12mm 8mm 12mm;
-}
-
-.faixa-superior{
-    background:#0b3f25;
-    color:white;
-    height:60px;
-    margin:0 -8mm 12px -8mm;
-    padding:8px 35px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.faixa-logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-weight:bold;
-    font-size:16px;
-}
-
-.faixa-logo img{
-    height:42px;
-    width:auto;
-}
-
-.faixa-contato{
-    text-align:right;
-    font-size:12px;
-    line-height:1.35;
-    font-weight:bold;
-    padding-right:25px;
-}
-
-.folha-topo{
-    width:220px;
-    height:auto;
-    display:block;
-    margin:0 0 12px 0;
-}
-
-.info{
-    margin-top:5px;
-}
-
-.info p{
-    font-size:16px;
-    margin:4px 0;
-}
-
-.label{
-    color:#4f6842;
-    font-weight:bold;
-}
-
-.linha{
-    width:100%;
-    border-top:2px solid #4f6842;
-    margin:10px 0 12px 0;
-}
-
-.form-prescricao{
-    width:100%;
-}
-
-/* Campo só aparece na tela. */
-#id_texto,
-.texto-prescricao{
-    width:100%;
-    min-height:145mm;
-    height:145mm;
-    border:none;
-    outline:none;
-    resize:none;
-    font-size:15px;
-    line-height:1.55;
-    font-family:Arial, Helvetica, sans-serif;
-    background:transparent;
-}
-
-/* Texto exclusivo da impressão. Evita imprimir o textarea e o espelho ao mesmo tempo. */
-.texto-impressao{
-    display:none;
-    width:100%;
-    font-size:15px;
-    line-height:1.55;
-    font-family:Arial, Helvetica, sans-serif;
-    white-space:pre-wrap;
-    overflow-wrap:break-word;
-    word-break:normal;
-}
-
-.barra-acoes{
-    display:flex;
-    gap:8px;
-    margin:0 0 10px 0;
-}
-
-.btn-print,
-.btn-salvar{
-    background:#315c35;
-    color:#fff;
-    border:none;
-    border-radius:8px;
-    padding:12px 18px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.btn-salvar{
-    background:#0b6d3b;
-}
-
-.rodape-final{
-    position:relative;
-    margin-top:20px;
-    min-height:32mm;
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
-    page-break-inside:avoid;
-    break-inside:avoid;
-}
-
-.obs-legal{
-    position:absolute;
-    left:0;
-    bottom:0;
-    width:155px;
-    font-size:7px;
-    line-height:1.1;
-    text-align:center;
-    letter-spacing:.6px;
-}
-
-.assinatura-area{
-    width:260px;
-    text-align:center;
-    z-index:2;
-}
-
-.assinatura-img{
-    width:75px !important;
-    height:auto !important;
-    display:block;
-    margin:0 auto -2px auto;
-}
-
-.linha-assinatura{
-    width:220px;
-    border-top:1px solid #555;
-    margin:0 auto 4px auto;
-}
-
-.dados-profissional{
-    font-size:9px;
-    line-height:1.15;
-    margin:0;
-    color:#315c35;
-}
-
-.folha-base{
-    position:absolute;
-    right:5mm;
-    bottom:0;
-    width:170px;
-    height:auto;
-}
-
-@media(max-width:768px){
-    .barra-acoes{
-        margin:10px;
-        flex-direction:column;
-    }
-}
-
+@page{size:A4;margin:8mm;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.folha{width:100%;max-width:190mm;min-height:270mm;margin:0 auto;position:relative;padding:0 12mm 8mm;}
+.faixa-superior{background:#0b3f25;color:white;height:60px;margin:0 -8mm 12px;padding:8px 35px;display:flex;justify-content:space-between;align-items:center;}
+.faixa-logo{display:flex;align-items:center;gap:10px;font-weight:bold;font-size:16px;}
+.faixa-logo img{height:42px;width:auto;}
+.faixa-contato{text-align:right;font-size:12px;line-height:1.35;font-weight:bold;padding-right:25px;}
+.folha-topo{width:220px;height:auto;display:block;margin:0 0 12px;}
+.info{margin-top:5px;}
+.info p{font-size:16px;margin:4px 0;}
+.label{color:#4f6842;font-weight:bold;}
+.linha{width:100%;border-top:2px solid #4f6842;margin:10px 0 12px;}
+.form-prescricao{width:100%;}
+#id_texto,.texto-prescricao{width:100%;min-height:145mm;height:145mm;border:1px solid #d6d6d6;outline:none;resize:vertical;font-size:15px;line-height:1.55;font-family:Arial,Helvetica,sans-serif;background:transparent;padding:10px;}
+.texto-impressao{display:none;width:100%;font-size:15px;line-height:1.55;font-family:Arial,Helvetica,sans-serif;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;}
+.barra-acoes{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px;padding:8px;background:#f3f5f2;border-radius:8px;}
+.btn-print,.btn-salvar,.btn-formatar{background:#315c35;color:#fff;border:none;border-radius:7px;padding:10px 14px;cursor:pointer;font-weight:bold;font-size:14px;}
+.btn-salvar{background:#0b6d3b;}
+.btn-formatar{background:#fff;color:#173f2b;border:1px solid #c8d4ca;min-width:40px;}
+.btn-formatar:hover,.btn-formatar:focus{background:#e5eee6;}
+.btn-formatar[aria-pressed="true"]{background:#dce9dd;border-color:#315c35;}
+.separador-acoes{width:1px;height:28px;background:#ccd4cc;margin:0 3px;}
+.rodape-final{position:relative;margin-top:20px;min-height:32mm;display:flex;align-items:flex-end;justify-content:center;page-break-inside:avoid;break-inside:avoid;}
+.obs-legal{position:absolute;left:0;bottom:0;width:155px;font-size:7px;line-height:1.1;text-align:center;letter-spacing:.6px;}
+.assinatura-area{width:260px;text-align:center;z-index:2;}
+.assinatura-img{width:75px !important;height:auto !important;display:block;margin:0 auto -2px;}
+.linha-assinatura{width:220px;border-top:1px solid #555;margin:0 auto 4px;}
+.dados-profissional{font-size:9px;line-height:1.15;margin:0;color:#315c35;}
+.folha-base{position:absolute;right:5mm;bottom:0;width:170px;height:auto;}
+@media(max-width:768px){.barra-acoes{margin:10px;gap:6px}.btn-formatar{padding:9px 11px}#id_texto,.texto-prescricao{min-height:55vh;height:55vh}.folha{padding-left:5mm;padding-right:5mm}.faixa-superior{padding:8px 12px}.faixa-contato{padding-right:0;font-size:10px}}
 @media print{
-    /* Nada da interface é impresso. */
-    .barra-acoes{
-        display:none !important;
-    }
-
-    body{
-        margin:0;
-    }
-
-    #id_texto,
-    .texto-prescricao{
-        display:none !important;
-    }
-
-    .texto-impressao{
-        display:block !important;
-    }
+ .barra-acoes{display:none !important;}
+ body{margin:0;}
+ #id_texto,.texto-prescricao{display:none !important;}
+ .texto-impressao{display:block !important;}
 }
 </style>
 </head>
-
 <body>
-
 <div class="barra-acoes">
-    <button
-        type="submit"
-        form="formPrescricao"
-        class="btn-salvar">
-        💾 Salvar Prescrição
-    </button>
-
-    <button
-        type="button"
-        onclick="window.print()"
-        class="btn-print">
-        🖨 Imprimir / Salvar PDF
-    </button>
+ <button type="submit" form="formPrescricao" class="btn-salvar">💾 Salvar Prescrição</button>
+ <span class="separador-acoes" aria-hidden="true"></span>
+ <button type="button" class="btn-formatar" data-command="bold" title="Negrito (Ctrl+B)" aria-label="Negrito"><strong>B</strong></button>
+ <button type="button" class="btn-formatar" data-command="italic" title="Itálico (Ctrl+I)" aria-label="Itálico"><em>I</em></button>
+ <span class="separador-acoes" aria-hidden="true"></span>
+ <button type="button" class="btn-formatar" data-command="alignLeft" title="Alinhar à esquerda" aria-label="Alinhar à esquerda">☰</button>
+ <button type="button" class="btn-formatar" data-command="alignCenter" title="Centralizar" aria-label="Centralizar">≡</button>
+ <button type="button" class="btn-formatar" data-command="alignRight" title="Alinhar à direita" aria-label="Alinhar à direita">☷</button>
+ <button type="button" class="btn-formatar" data-command="alignJustify" title="Justificar" aria-label="Justificar">▤</button>
+ <span class="separador-acoes" aria-hidden="true"></span>
+ <button type="button" onclick="window.print()" class="btn-print">🖨 Imprimir / Salvar PDF</button>
 </div>
-
 <div class="folha">
-
-    <div class="faixa-superior">
-        <div class="faixa-logo">
-            <img src="{% static 'img/logo_ava.png' %}" alt="Logo">
-            <span>Ava Curativos</span>
-        </div>
-
-        <div class="faixa-contato">
-            Contato: (75) 98141-9840<br>
-            Instagram: @enfaannavitoria
-        </div>
-    </div>
-
-    <img src="{% static 'img/folha_topo.png' %}" class="folha-topo" alt="">
-
-    <div class="info">
-        <p>
-            <span class="label">DATA:</span>
-            {% now "d/m/Y" %}
-        </p>
-
-        <p>
-            <span class="label">PACIENTE:</span>
-            {{ paciente.nome|upper }}
-        </p>
-    </div>
-
-    <div class="linha"></div>
-
-    <form method="post" id="formPrescricao" class="form-prescricao">
-        {% csrf_token %}
-
-        {{ form.texto }}
-
-        <div class="texto-impressao" id="textoImpressao"></div>
-    </form>
-
-    <div class="rodape-final">
-        <div class="obs-legal">
-            ART. 88. TODO PACIENTE OU SEU REPRESENTANTE LEGAL TEM O DIREITO DE SOLICITAR E RECEBER CÓPIA DO RESPECTIVO PRONTUÁRIO.
-        </div>
-
-        <div class="assinatura-area">
-            <img src="{% static 'img/assinatura.png' %}" class="assinatura-img" alt="Assinatura">
-            <div class="linha-assinatura"></div>
-            <p class="dados-profissional">
-                Enfa. Anna Vitória Alves<br>
-                Estomaterapeuta - COREN-BA: 778832ENF<br>
-                Feira de Santana-BA<br>
-                Contato: (75) 98141-9840<br>
-                Instagram: @enfaannavitoria
-            </p>
-        </div>
-
-        <img src="{% static 'img/folha_base.png' %}" class="folha-base" alt="">
-    </div>
-
+ <div class="faixa-superior">
+  <div class="faixa-logo"><img src="{% static 'img/logo_ava.png' %}" alt="Logo"><span>Ava Curativos</span></div>
+  <div class="faixa-contato">Contato: (75) 98141-9840<br>Instagram: @enfaannavitoria</div>
+ </div>
+ <img src="{% static 'img/folha_topo.png' %}" class="folha-topo" alt="">
+ <div class="info">
+  <p><span class="label">DATA:</span> {% now "d/m/Y" %}</p>
+  <p><span class="label">PACIENTE:</span> {{ paciente.nome|upper }}</p>
+ </div>
+ <div class="linha"></div>
+ <form method="post" id="formPrescricao" class="form-prescricao">
+  {% csrf_token %}
+  {{ form.texto }}
+  <div class="texto-impressao" id="textoImpressao"></div>
+ </form>
+ <div class="rodape-final">
+  <div class="obs-legal">ART. 88. TODO PACIENTE OU SEU REPRESENTANTE LEGAL TEM O DIREITO DE SOLICITAR E RECEBER CÓPIA DO RESPECTIVO PRONTUÁRIO.</div>
+  <div class="assinatura-area">
+   <img src="{% static 'img/assinatura.png' %}" class="assinatura-img" alt="Assinatura">
+   <div class="linha-assinatura"></div>
+   <p class="dados-profissional">Enfa. Anna Vitória Alves<br>Estomaterapeuta - COREN-BA: 778832ENF<br>Feira de Santana-BA<br>Contato: (75) 98141-9840<br>Instagram: @enfaannavitoria</p>
+  </div>
+  <img src="{% static 'img/folha_base.png' %}" class="folha-base" alt="">
+ </div>
 </div>
-
 <script>
 (function(){
-    const campo = document.getElementById("id_texto");
-    const impressao = document.getElementById("textoImpressao");
+ const campo=document.getElementById("id_texto");
+ const impressao=document.getElementById("textoImpressao");
+ const botoes=document.querySelectorAll(".btn-formatar");
+ if(!campo || !impressao) return;
 
-    function atualizarTextoImpressao(){
-        if(campo && impressao){
-            impressao.textContent = campo.value || "";
-        }
-    }
-
-    atualizarTextoImpressao();
-
-    if(campo){
-        campo.addEventListener("input", atualizarTextoImpressao);
-        campo.addEventListener("change", atualizarTextoImpressao);
-    }
-
-    window.addEventListener("beforeprint", atualizarTextoImpressao);
+ function atualizarTextoImpressao(){
+   impressao.textContent=campo.value || "";
+   impressao.style.textAlign=campo.dataset.alinhamento || "left";
+   impressao.style.fontWeight=campo.dataset.negrito==="true" ? "bold" : "normal";
+   impressao.style.fontStyle=campo.dataset.italico==="true" ? "italic" : "normal";
+ }
+ function selecionarTudoParaFormatar(){
+   const inicio=campo.selectionStart;
+   const fim=campo.selectionEnd;
+   if(inicio===fim){
+     return {inicio:0,fim:campo.value.length,selecionouTudo:true};
+   }
+   return {inicio,fim,selecionouTudo:false};
+ }
+ function formatarTexto(comando){
+   const selecao=selecionarTudoParaFormatar();
+   if(comando==="bold" || comando==="italic"){
+     const chave=comando==="bold" ? "negrito" : "italico";
+     const ativo=campo.dataset[chave]==="true";
+     campo.dataset[chave]=ativo ? "false" : "true";
+     botoes.forEach(b=>{if(b.dataset.command===comando)b.setAttribute("aria-pressed",String(!ativo));});
+   }else{
+     const mapa={alignLeft:"left",alignCenter:"center",alignRight:"right",alignJustify:"justify"};
+     campo.dataset.alinhamento=mapa[comando] || "left";
+     botoes.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.command===comando)));
+   }
+   atualizarTextoImpressao();
+   campo.focus();
+   campo.setSelectionRange(selecao.inicio,selecao.fim);
+ }
+ botoes.forEach(botao=>botao.addEventListener("mousedown",e=>e.preventDefault()));
+ botoes.forEach(botao=>botao.addEventListener("click",()=>formatarTexto(botao.dataset.command)));
+ campo.addEventListener("input",atualizarTextoImpressao);
+ campo.addEventListener("change",atualizarTextoImpressao);
+ window.addEventListener("beforeprint",atualizarTextoImpressao);
+ atualizarTextoImpressao();
 })();
 </script>
-
 </body>
 </html>
