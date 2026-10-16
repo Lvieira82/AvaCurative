@@ -19,8 +19,8 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;background:white
 .label{color:#4f6842;font-weight:bold;}
 .linha{width:100%;border-top:2px solid #4f6842;margin:10px 0 12px;}
 .form-prescricao{width:100%;}
-#id_texto,.texto-prescricao{width:100%;min-height:145mm;height:145mm;border:1px solid #d6d6d6;outline:none;resize:vertical;font-size:15px;line-height:1.55;font-family:Arial,Helvetica,sans-serif;background:transparent;padding:10px;}
-.texto-impressao{display:none;width:100%;font-size:15px;line-height:1.55;font-family:Arial,Helvetica,sans-serif;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;}
+#id_texto,.texto-prescricao{display:block;width:100%;min-height:145mm;height:145mm;border:1px solid #d6d6d6;outline:none;resize:vertical;font-size:15px;line-height:1.55;font-family:Arial,Helvetica,sans-serif;background:transparent;padding:10px;color:#111;text-align:left;font-weight:normal;font-style:normal;}
+.texto-impressao{display:none;width:100%;font-size:15px;line-height:1.55;font-family:Arial,Helvetica,sans-serif;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;text-align:left;font-weight:normal;font-style:normal;}
 .barra-acoes{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px;padding:8px;background:#f3f5f2;border-radius:8px;}
 .btn-print,.btn-salvar,.btn-formatar{background:#315c35;color:#fff;border:none;border-radius:7px;padding:10px 14px;cursor:pointer;font-weight:bold;font-size:14px;}
 .btn-salvar{background:#0b6d3b;}
@@ -48,13 +48,13 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;background:white
 <div class="barra-acoes">
  <button type="submit" form="formPrescricao" class="btn-salvar">💾 Salvar Prescrição</button>
  <span class="separador-acoes" aria-hidden="true"></span>
- <button type="button" class="btn-formatar" data-command="bold" title="Negrito (Ctrl+B)" aria-label="Negrito"><strong>B</strong></button>
- <button type="button" class="btn-formatar" data-command="italic" title="Itálico (Ctrl+I)" aria-label="Itálico"><em>I</em></button>
+ <button type="button" class="btn-formatar" data-command="bold" title="Negrito (Ctrl+B)" aria-label="Negrito" aria-pressed="false"><strong>B</strong></button>
+ <button type="button" class="btn-formatar" data-command="italic" title="Itálico (Ctrl+I)" aria-label="Itálico" aria-pressed="false"><em>I</em></button>
  <span class="separador-acoes" aria-hidden="true"></span>
- <button type="button" class="btn-formatar" data-command="alignLeft" title="Alinhar à esquerda" aria-label="Alinhar à esquerda">☰</button>
- <button type="button" class="btn-formatar" data-command="alignCenter" title="Centralizar" aria-label="Centralizar">≡</button>
- <button type="button" class="btn-formatar" data-command="alignRight" title="Alinhar à direita" aria-label="Alinhar à direita">☷</button>
- <button type="button" class="btn-formatar" data-command="alignJustify" title="Justificar" aria-label="Justificar">▤</button>
+ <button type="button" class="btn-formatar" data-command="alignLeft" title="Alinhar à esquerda" aria-label="Alinhar à esquerda" aria-pressed="true">☰</button>
+ <button type="button" class="btn-formatar" data-command="alignCenter" title="Centralizar" aria-label="Centralizar" aria-pressed="false">≡</button>
+ <button type="button" class="btn-formatar" data-command="alignRight" title="Alinhar à direita" aria-label="Alinhar à direita" aria-pressed="false">☷</button>
+ <button type="button" class="btn-formatar" data-command="alignJustify" title="Justificar" aria-label="Justificar" aria-pressed="false">▤</button>
  <span class="separador-acoes" aria-hidden="true"></span>
  <button type="button" onclick="window.print()" class="btn-print">🖨 Imprimir / Salvar PDF</button>
 </div>
@@ -88,45 +88,44 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;background:white
 (function(){
  const campo=document.getElementById("id_texto");
  const impressao=document.getElementById("textoImpressao");
- const botoes=document.querySelectorAll(".btn-formatar");
+ const botoes=document.querySelectorAll(".barra-acoes .btn-formatar");
  if(!campo || !impressao) return;
 
- function atualizarTextoImpressao(){
+ const estado={bold:false,italic:false,align:"left"};
+ const alinhamentos={alignLeft:"left",alignCenter:"center",alignRight:"right",alignJustify:"justify"};
+
+ function atualizarApresentacao(){
+   campo.style.fontWeight=estado.bold?"bold":"normal";
+   campo.style.fontStyle=estado.italic?"italic":"normal";
+   campo.style.textAlign=estado.align;
+   impressao.style.fontWeight=estado.bold?"bold":"normal";
+   impressao.style.fontStyle=estado.italic?"italic":"normal";
+   impressao.style.textAlign=estado.align;
    impressao.textContent=campo.value || "";
-   impressao.style.textAlign=campo.dataset.alinhamento || "left";
-   impressao.style.fontWeight=campo.dataset.negrito==="true" ? "bold" : "normal";
-   impressao.style.fontStyle=campo.dataset.italico==="true" ? "italic" : "normal";
+   botoes.forEach(botao=>{
+     const comando=botao.dataset.command;
+     const ativo=comando==="bold" ? estado.bold :
+       comando==="italic" ? estado.italic :
+       alinhamentos[comando]===estado.align;
+     botao.setAttribute("aria-pressed",String(ativo));
+   });
  }
- function selecionarTudoParaFormatar(){
-   const inicio=campo.selectionStart;
-   const fim=campo.selectionEnd;
-   if(inicio===fim){
-     return {inicio:0,fim:campo.value.length,selecionouTudo:true};
-   }
-   return {inicio,fim,selecionouTudo:false};
- }
- function formatarTexto(comando){
-   const selecao=selecionarTudoParaFormatar();
-   if(comando==="bold" || comando==="italic"){
-     const chave=comando==="bold" ? "negrito" : "italico";
-     const ativo=campo.dataset[chave]==="true";
-     campo.dataset[chave]=ativo ? "false" : "true";
-     botoes.forEach(b=>{if(b.dataset.command===comando)b.setAttribute("aria-pressed",String(!ativo));});
-   }else{
-     const mapa={alignLeft:"left",alignCenter:"center",alignRight:"right",alignJustify:"justify"};
-     campo.dataset.alinhamento=mapa[comando] || "left";
-     botoes.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.command===comando)));
-   }
-   atualizarTextoImpressao();
-   campo.focus();
-   campo.setSelectionRange(selecao.inicio,selecao.fim);
- }
- botoes.forEach(botao=>botao.addEventListener("mousedown",e=>e.preventDefault()));
- botoes.forEach(botao=>botao.addEventListener("click",()=>formatarTexto(botao.dataset.command)));
- campo.addEventListener("input",atualizarTextoImpressao);
- campo.addEventListener("change",atualizarTextoImpressao);
- window.addEventListener("beforeprint",atualizarTextoImpressao);
- atualizarTextoImpressao();
+
+ botoes.forEach(botao=>{
+   botao.addEventListener("mousedown",evento=>evento.preventDefault());
+   botao.addEventListener("click",()=>{
+     const comando=botao.dataset.command;
+     if(comando==="bold") estado.bold=!estado.bold;
+     else if(comando==="italic") estado.italic=!estado.italic;
+     else if(alinhamentos[comando]) estado.align=alinhamentos[comando];
+     atualizarApresentacao();
+     campo.focus();
+   });
+ });
+ campo.addEventListener("input",atualizarApresentacao);
+ campo.addEventListener("change",atualizarApresentacao);
+ window.addEventListener("beforeprint",atualizarApresentacao);
+ atualizarApresentacao();
 })();
 </script>
 </body>
