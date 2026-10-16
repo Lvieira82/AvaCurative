@@ -11,9 +11,7 @@
     margin:8mm;
 }
 
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
     margin:0;
@@ -29,15 +27,15 @@ body{
     max-width:190mm;
     margin:0 auto;
     position:relative;
-    padding:0 12mm 8mm 12mm;
+    padding:0 12mm 3mm 12mm;
 }
 
 .faixa-superior{
     background:#0b3f25;
     color:white;
-    height:60px;
-    margin:0 -8mm 15px -8mm;
-    padding:8px 35px;
+    min-height:48px;
+    margin:0 -8mm 10px -8mm;
+    padding:6px 25px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -47,29 +45,26 @@ body{
     display:flex;
     align-items:center;
     gap:10px;
-    font-size:16px;
+    font-size:15px;
     font-weight:bold;
 }
 
-.faixa-logo img{
-    height:42px;
-    width:auto;
-}
+.faixa-logo img{height:36px;width:auto;}
 
 .faixa-contato{
-    width:260px;
+    width:240px;
     text-align:right;
-    font-size:12px;
-    line-height:1.4;
+    font-size:10px;
+    line-height:1.3;
     font-weight:bold;
-    padding-right:25px;
+    padding-right:15px;
 }
 
 .folha-topo{
-    width:190px;
+    width:150px;
     height:auto;
     display:block;
-    margin:0 0 5px 0;
+    margin:0 0 4px 0;
 }
 
 .topo{
@@ -80,57 +75,52 @@ body{
 
 .titulo h1{
     color:#4f6842;
-    font-size:24px;
-    letter-spacing:1.5px;
+    font-size:21px;
+    letter-spacing:1px;
     margin:0;
 }
 
 .titulo h2{
     color:#4f6842;
-    font-size:12px;
-    letter-spacing:2px;
-    margin:3px 0 12px;
+    font-size:10px;
+    letter-spacing:1.5px;
+    margin:2px 0 8px;
 }
 
 .data{
-    font-size:14px;
+    font-size:12px;
     font-weight:bold;
-    padding-right:10px;
+    padding-right:6px;
 }
 
-.label{
-    color:#4f6842;
-    font-weight:bold;
-}
+.label{color:#4f6842;font-weight:bold;}
 
 .info p{
-    font-size:14px;
-    margin:4px 0;
+    font-size:12px;
+    margin:3px 0;
 }
 
 .linha{
     width:100%;
     border-top:2px solid #4f6842;
-    margin:10px 0 14px 0;
+    margin:7px 0 9px 0;
 }
 
-.secao{
-    margin-top:6px;
-}
+.secao{margin-top:4px;}
 
 .secao h3{
     color:#4f6842;
-    font-size:12px;
+    font-size:10px;
     font-weight:bold;
-    letter-spacing:1.5px;
-    margin:10px 0 6px;
+    letter-spacing:1.2px;
+    margin:7px 0 4px;
     text-transform:uppercase;
 }
 
 .texto{
     width:100%;
-    font-size:15px;
-    line-height:1.55;
+    font-size:12px;
+    line-height:1.35;
     text-align:justify;
     text-justify:inter-word;
     white-space:pre-wrap;
@@ -138,12 +128,9 @@ body{
     overflow-wrap:break-word;
 }
 
-/* Importante: não usar min-height aqui.
-   A assinatura deve subir e acompanhar o conteúdo quando houver pouco texto. */
-
 .marcadores-clinicos{
-    margin-top:12px;
-    margin-bottom:8px;
+    margin-top:7px;
+    margin-bottom:5px;
 }
 
 .marcadores-clinicos span{
@@ -152,84 +139,87 @@ body{
     color:#4f6842;
     border:1px solid #cfd8c9;
     border-radius:14px;
-    padding:4px 10px;
-    margin-right:6px;
-    font-size:11px;
+    padding:3px 8px;
+    margin-right:5px;
+    font-size:10px;
     font-weight:bold;
 }
 
 .fotos{
-    margin-top:14px;
+    margin-top:8px;
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:6px;
-    page-break-inside:avoid;
     break-inside:avoid;
 }
 
 .fotos img{
     width:100%;
-    height:95px;
+    height:72px;
     object-fit:contain;
-    border:2px solid #4f6842;
-    border-radius:8px;
+    border:1.5px solid #4f6842;
+    border-radius:7px;
     background:white;
 }
 
+/*
+  O rodapé permanece no fluxo normal do documento.
+  Assim, acompanha o texto e as fotos, sem ser empurrado artificialmente
+  para uma folha isolada por altura mínima ou margem excessiva.
+*/
 .rodape-final{
     position:relative;
-    margin-top:20px;
-    min-height:35mm;
+    margin-top:8px;
+    min-height:0;
     display:flex;
     align-items:flex-end;
     justify-content:center;
-    page-break-inside:avoid;
+    gap:8px;
     break-inside:avoid;
+    page-break-inside:avoid;
 }
 
 .obs-legal{
-    position:absolute;
-    left:0;
-    bottom:0;
-    width:170px;
-    font-size:8px;
-    line-height:1.15;
+    width:145px;
+    flex:0 0 145px;
+    font-size:7px;
+    line-height:1.1;
     text-align:center;
-    letter-spacing:.7px;
+    letter-spacing:.3px;
 }
 
 .assinatura-area{
-    width:260px;
+    width:230px;
+    flex:0 1 230px;
     text-align:center;
     z-index:2;
 }
 
 .assinatura-img{
-    width:90px !important;
+    width:68px !important;
     height:auto !important;
     display:block;
     margin:0 auto -2px auto;
 }
 
 .linha-assinatura{
-    width:220px;
+    width:185px;
     border-top:1px solid #555;
-    margin:0 auto 4px auto;
+    margin:0 auto 3px auto;
 }
 
 .dados-profissional{
-    font-size:10px;
-    line-height:1.2;
+    font-size:8px;
+    line-height:1.12;
     margin:0;
     color:#315c35;
 }
 
 .folha-base{
-    position:absolute;
-    right:0;
-    bottom:0;
-    width:170px;
+    width:95px;
     height:auto;
+    flex:0 0 95px;
+    align-self:flex-end;
 }
 
 .btn-print{
@@ -247,13 +237,22 @@ body{
 }
 
 @media print{
-    .btn-print{
-        display:none !important;
-    }
+    .btn-print{display:none !important;}
+    body{margin:0;}
+    .folha{max-width:none;}
+}
 
-    body{
-        margin:0;
-    }
+/* Telas estreitas: mantém o rodapé organizado sem alterar a impressão A4. */
+@media screen and (max-width:600px){
+    .folha{padding-left:5mm;padding-right:5mm;}
+    .faixa-superior{padding:6px 10px;}
+    .faixa-contato{width:auto;padding-right:0;font-size:9px;}
+    .titulo h1{font-size:18px;}
+    .rodape-final{gap:4px;}
+    .obs-legal{width:30%;flex-basis:30%;font-size:6px;}
+    .assinatura-area{width:45%;flex-basis:45%;}
+    .linha-assinatura{width:90%;}
+    .folha-base{width:20%;flex-basis:20%;}
 }
 </style>
 </head>
